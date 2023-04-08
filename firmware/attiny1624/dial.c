@@ -16,13 +16,13 @@ static uint32_t inverse(uint32_t v)
 
 static void dial_try_adjust(uint8_t i)
 {
-	if (dial_min[i] > dial_acc[i]+DIAL_DEADZONE)
+	if (dial_min[i] > dial_acc[i] && dial_min[i] > dial_acc[i] + DIAL_DEADZONE)
 	{
 		dial_min[i] = dial_acc[i]+DIAL_DEADZONE;
 		dial_inv[i] = inverse(dial_max[i]-dial_min[i]);
 	}
 
-	if (dial_max[i] < dial_acc[i]-DIAL_DEADZONE)
+	if (dial_max[i] < dial_acc[i] && dial_max[i] < dial_acc[i]-DIAL_DEADZONE)
 	{
 		dial_max[i] = dial_acc[i]-DIAL_DEADZONE;
 		dial_inv[i] = inverse(dial_max[i]-dial_min[i]);
@@ -80,6 +80,22 @@ void dial_set_limits(uint8_t i, dial_limit_t *limit)
 	dial_inv[i] = inverse(dial_max[i]-dial_min[i]);
 
 	dial_try_adjust(i);
+}
+
+uint16_t dial_get_raw(uint8_t i)
+{
+	if (i >= N_DIALS)
+		return 0;
+
+	return dial_acc[i];
+}
+
+uint32_t dial_get_inv(uint8_t i)
+{
+	if (i >= N_DIALS)
+		return 0;
+
+	return dial_inv[i];
 }
 
 uint16_t dial_get(uint8_t i)

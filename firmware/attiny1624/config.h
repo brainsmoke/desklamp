@@ -10,9 +10,9 @@
 
 #define N_DIALS       N_LEDS
 
-#define DIAL_MIN_DEFAULT 60
+#define DIAL_MIN_DEFAULT 600
 #define DIAL_MAX_DEFAULT 60000
-#define DIAL_DEADZONE 50        /* full-on / full-off regions */
+#define DIAL_DEADZONE 400        /* full-on / full-off regions */
 
 #define DEFAULT_MAX_BRIGHTNESS (65535)
 #define DEFAULT_GAMMA_DEC (20) /* gamma = gamma_dec/10 */

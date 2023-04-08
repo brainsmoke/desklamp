@@ -37,4 +37,6 @@ void write_limits(uint8_t n, dial_limit_t* limit);
 void factory_reset(void);
 void settings_init(void);
 
+void debug_read_settings(settings_t *s);
+
 #endif //SETTINGS_H

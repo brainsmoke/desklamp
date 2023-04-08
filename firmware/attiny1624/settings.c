@@ -75,3 +75,8 @@ void settings_init(void)
 	if ( read_magic() != EEPROM_MAGIC || read_version() < EEPROM_VERSION)
 		factory_reset();
 }
+
+void debug_read_settings(settings_t *s)
+{
+	eeprom_read_block(s, &settings, sizeof(settings_t));
+}

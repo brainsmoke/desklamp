@@ -40,8 +40,8 @@ void load(void)
 	for (i=0; i<N_DIALS; i++)
 	{
 		dial_limit_t lim;
-		dial_get_limits(i, &lim);
-		write_limits(i, &lim);
+		read_limits(i, &lim);
+		dial_set_limits(i, &lim);
 	}
 }
 
@@ -61,11 +61,49 @@ void factory_reset(void)
 	uint8_t i;
 	for (i=0; i<N_DIALS; i++)
 		write_limits(i, &lim);
+	
 
 	flush();
 	reset();
 }
 
+void debug_print(void)
+{
+	print ("max brightness: ");
+	print_u16(gamma_get_max());
+	println("");
+
+	print ("gamma: ");
+	print_u16(gamma_get());
+	println("");
+
+	println ("");
+	println ("dials:");
+	uint8_t i;
+	for (i=0; i<N_DIALS; i++)
+	{
+		dial_limit_t lim;
+		dial_get_limits(i, &lim);
+		print ("dial ");
+		print_u16(i);
+		print (": min= ");
+		print_u16(lim.min);
+		print (" max= ");
+		print_u16(lim.max);
+		print (" cur= ");
+		print_u16(dial_get(i));
+		print (" raw= ");
+		print_u16(dial_get_raw(i));
+		print (" inv= ");
+		print_u32(dial_get_inv(i));
+		println("");
+	}
+
+	settings_t s;
+	debug_read_settings(&s);
+	print_hexbytes((uint8_t *)&s, sizeof(s));
+	println("");
+}
 
 void rtc_tick(void)
 {
@@ -84,6 +122,9 @@ int main(void)
 
 	load();
 
+	prot_init();
+
+	sei();
 	for (;;)
 	{
 		prot_poll();
@@ -97,6 +138,16 @@ int main(void)
 				uint16_t v = gamma_translate(dial_get(i));
 				uart0_putchar(v&0xff);
 				uart0_putchar(v>>8);
+
+/*
+print("led ");
+print_u16(i);
+print(": ");
+print_u16(v);
+print(": ");
+print_u16(dial_get(i));
+print("\r\n");
+*/
 			}
 		}
 	}

@@ -4,5 +4,6 @@
 void load(void);
 void save(void);
 void factory_reset(void);
+void debug_print(void);
 
 #endif //FIRMWARE_H

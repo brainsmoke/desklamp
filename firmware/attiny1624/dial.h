@@ -15,6 +15,8 @@ void dial_init(void);
 
 void dial_poll(void);
 uint16_t dial_get(uint8_t i); /* does not do new ADC reads */
+uint16_t dial_get_raw(uint8_t i);
+uint32_t dial_get_inv(uint8_t i);
 void dial_get_limits(uint8_t i, dial_limit_t *limit);
 void dial_set_limits(uint8_t i, dial_limit_t *limit);
 

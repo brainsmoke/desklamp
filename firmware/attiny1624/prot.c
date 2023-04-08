@@ -15,6 +15,7 @@
 
 enum
 {
+	CMD_DEBUG,
 	CMD_FACTORY_RESET,
 	CMD_LOAD,
 	CMD_RESET,
@@ -34,7 +35,8 @@ const struct
 
 } commands[] =
 {
-	{ .name = "FACTORT RESET",      .cmd = CMD_FACTORY_RESET,                   },
+	{ .name = "DEBUG",              .cmd = CMD_DEBUG,                           },
+	{ .name = "FACTORY RESET",      .cmd = CMD_FACTORY_RESET,                   },
 	{ .name = "LOAD",               .cmd = CMD_LOAD,                            },
 	{ .name = "RESET",              .cmd = CMD_RESET,                           },
 	{ .name = "SAVE",               .cmd = CMD_SAVE,                            },
@@ -60,7 +62,7 @@ static void process_cmd(uint8_t *cmd_line)
 
 		if (commands[i].cmp_off == off)
 		{
-			while ( commands[i].name[off] == toupper(cmd_line[off]) )
+			while ( commands[i].name[off] && commands[i].name[off] == toupper(cmd_line[off]) )
 				off++;
 
 			if (commands[i].name[off] == '\0')
@@ -79,21 +81,24 @@ static void process_cmd(uint8_t *cmd_line)
 
 	switch (cmd)
 	{
+		case CMD_DEBUG:
+			debug_print();
+			break;
 		case CMD_FACTORY_RESET:
-			print ("factory reset\n");
+			println ("factory reset");
 			factory_reset();
 			break;
 		case CMD_LOAD:
-			print ("loading eeprom\n");
+			println ("loading eeprom");
 			load();
 			break;
 		case CMD_RESET:
-			print ("resetting\n");
+			println ("resetting");
 			flush();
 			reset();
 			break;
 		case CMD_SAVE:
-			print ("saving eeprom\n");
+			println ("saving eeprom");
 			save();
 			break;
 		case CMD_SET_LED_0:
@@ -109,10 +114,10 @@ static void process_cmd(uint8_t *cmd_line)
 				print_u16 (led);
 				print (" ");
 				print_u16 (n);
-				print ("\n");
+				println ("");
 			}
 			else
-				print ("syntax error\n");
+				println ("syntax error");
 			break;
 		}
 		case CMD_SET_MAX_BRIGHTNESS:
@@ -126,15 +131,15 @@ static void process_cmd(uint8_t *cmd_line)
 				n = gamma_get_max();
 				print ("max brightness: ");
 				print_u16 (n);
-				print ("\n");
+				println ("");
 			}
 			else
-				print ("syntax error\n");
+				println ("syntax error");
 
 			break;
 		}
 		case CMD_UNKNOWN_COMMAND:
-			print ("unknown command\n");
+			println ("unknown command");
 			break;
 	}
 }
@@ -147,20 +152,25 @@ static void write_prompt(void)
 void prot_poll(void)
 {
 	static uint16_t ix=0;
+	static uint8_t last = 0;
 	int c;
 	while ( (c = uart_getchar()) != -1)
 	{
-		if (c == '\r')
+		last = c;
+
+		if ( (c == '\n') && ( last == '\r') )
 			continue;
 
-		if (c == '\n')
+		if ( (c == '\r') || (c == '\n') )
 		{
+			println("");
 			line[ix] = '\0';
 			process_cmd(line);
 			write_prompt();
 			ix = 0;
 			break;
 		}
+		uart_putchar(c);
 
 		line[ix++] = c;
 	}
@@ -168,7 +178,8 @@ void prot_poll(void)
 
 void prot_init(void)
 {
-	print ("I am a lamp\n");
+	println("");
+	println ("I am a lamp");
 	write_prompt();
 }
 

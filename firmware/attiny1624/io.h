@@ -4,8 +4,10 @@
 #include <stdint.h>
 
 void print_u16(uint16_t value);
+void print_u32(uint32_t value);
 void print_hexbytes(uint8_t *bytes, int len);
 void print(char *s);
+void println(char *s);
 void flush(void);
 
 uint8_t *parse_u16(uint8_t *s, uint16_t *n);

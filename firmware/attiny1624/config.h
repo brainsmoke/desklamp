@@ -6,9 +6,9 @@
 
 #define EEPROM_MAGIC (0x504d414c)
 
-#define N_LEDS        3
+#define N_FACETS      3
 
-#define N_DIALS       N_LEDS
+#define N_DIALS       3
 
 #define DIAL_MIN_DEFAULT 600
 #define DIAL_MAX_DEFAULT 60000

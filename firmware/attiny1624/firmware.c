@@ -74,7 +74,7 @@ void debug_print(void)
 	println("");
 
 	print ("gamma: ");
-	print_u16(gamma_get());
+	print_u32_fixed_point(gamma_get(), 1);
 	println("");
 
 	println ("");
@@ -132,23 +132,14 @@ int main(void)
 		if (tick)
 		{
 			tick=0;
-			uint8_t i;
-			for (i=0; i<N_LEDS; i++)
-			{
-				uint16_t v = gamma_translate(dial_get(i));
-				uart0_putchar(v&0xff);
-				uart0_putchar(v>>8);
-
-/*
-print("led ");
-print_u16(i);
-print(": ");
-print_u16(v);
-print(": ");
-print_u16(dial_get(i));
-print("\r\n");
-*/
-			}
+			uint8_t i,j;
+			for (j=0; j<N_FACETS; j++)
+				for (i=0; i<N_DIALS; i++)
+				{
+					uint16_t v = gamma_translate(dial_get(i));
+					uart0_putchar(v&0xff);
+					uart0_putchar(v>>8);
+				}
 		}
 	}
 }

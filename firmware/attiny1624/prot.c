@@ -20,6 +20,7 @@ enum
 	CMD_LOAD,
 	CMD_RESET,
 	CMD_SAVE,
+	CMD_SET_GAMMA,
 	CMD_SET_LED_0,
 	CMD_SET_LED_1,
 	CMD_SET_LED_2,
@@ -40,7 +41,8 @@ const struct
 	{ .name = "LOAD",               .cmd = CMD_LOAD,                            },
 	{ .name = "RESET",              .cmd = CMD_RESET,                           },
 	{ .name = "SAVE",               .cmd = CMD_SAVE,                            },
-	{ .name = "sET LED 0",          .cmd = CMD_SET_LED_0,          .cmp_off = 1 },
+	{ .name = "sET GAMMA",          .cmd = CMD_SET_GAMMA,          .cmp_off = 1 },
+	{ .name = "set LED 0",          .cmd = CMD_SET_LED_0,          .cmp_off = 4 },
 	{ .name = "set led 1",          .cmd = CMD_SET_LED_1,          .cmp_off = 8 },
 	{ .name = "set led 2",          .cmd = CMD_SET_LED_2,          .cmp_off = 8 },
 	{ .name = "set MAX BRIGHTNESS", .cmd = CMD_SET_MAX_BRIGHTNESS, .cmp_off = 4 },
@@ -101,6 +103,22 @@ static void process_cmd(uint8_t *cmd_line)
 			println ("saving eeprom");
 			save();
 			break;
+		case CMD_SET_GAMMA:
+		{
+			uint8_t n;
+			args = parse_u8_one_decimal(args, &n);
+			if (args && *args == '\0')
+			{
+				gamma_set(n);
+				print ("gamma: ");
+				print_u32_fixed_point(gamma_get(), 1);
+				println ("");
+			}
+			else
+				println ("syntax error");
+
+			break;
+		}
 		case CMD_SET_LED_0:
 		case CMD_SET_LED_1:
 		case CMD_SET_LED_2:
@@ -124,13 +142,11 @@ static void process_cmd(uint8_t *cmd_line)
 		{
 			uint16_t n;
 			args = parse_u16(args, &n);
-			gamma_set_max(n);
 			if (args && *args == '\0')
 			{
 				gamma_set_max(n);
-				n = gamma_get_max();
 				print ("max brightness: ");
-				print_u16 (n);
+				print_u16 (gamma_get_max());
 				println ("");
 			}
 			else

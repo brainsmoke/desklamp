@@ -6,9 +6,19 @@
 
 #define EEPROM_MAGIC (0x504d414c)
 
-#define N_FACETS      3
-
 #define N_DIALS       3
+#define DIAL_WHITE             0
+#define DIAL_WARM_WHITE        1
+#define DIAL_EXTRA_WARM_WHITE  2
+
+
+#define N_LEDS        9
+
+#define LED_ORDER DIAL_WHITE, DIAL_EXTRA_WARM_WHITE, DIAL_WARM_WHITE
+
+#define LED_MAP       LED_ORDER, LED_ORDER, LED_ORDER
+
+
 
 #define DIAL_MIN_DEFAULT 600
 #define DIAL_MAX_DEFAULT 60000

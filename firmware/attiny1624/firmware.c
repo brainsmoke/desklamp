@@ -110,6 +110,8 @@ void rtc_tick(void)
 	tick = 1;
 }
 
+const uint8_t led_map[N_LEDS] = { LED_MAP };
+
 int main(void)
 {
 	set_clock();
@@ -118,13 +120,13 @@ int main(void)
 	adc_init();
 	dial_init();
 	uart_init();
-	rtc_init();
 
 	load();
 
 	prot_init();
 
 	sei();
+	rtc_init();
 	for (;;)
 	{
 		prot_poll();
@@ -132,14 +134,15 @@ int main(void)
 		if (tick)
 		{
 			tick=0;
-			uint8_t i,j;
-			for (j=0; j<N_FACETS; j++)
-				for (i=0; i<N_DIALS; i++)
-				{
-					uint16_t v = gamma_translate(dial_get(i));
-					uart0_putchar(v&0xff);
-					uart0_putchar(v>>8);
-				}
+			uint8_t i;
+			for (i=0; i<N_LEDS; i++)
+			{
+				uint16_t v = gamma_translate(dial_get(led_map[i]));
+				dial_poll();
+				uart0_putchar(v&0xff);
+				dial_poll();
+				uart0_putchar(v>>8);
+			}
 		}
 	}
 }

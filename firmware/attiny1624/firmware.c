@@ -94,8 +94,8 @@ void debug_print(void)
 		print_u16(dial_get(i));
 		print (" raw= ");
 		print_u16(dial_get_raw(i));
-		print (" inv= ");
-		print_u32(dial_get_inv(i));
+//		print (" inv= ");
+//		print_u32(dial_get_inv(i));
 		println("");
 	}
 

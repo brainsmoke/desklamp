@@ -112,6 +112,12 @@ void rtc_tick(void)
 
 const uint8_t led_map[N_LEDS] = { LED_MAP };
 
+void yield(void)
+{
+	dial_poll();
+	uart_rx_poll();
+}
+
 int main(void)
 {
 	set_clock();
@@ -130,7 +136,7 @@ int main(void)
 	for (;;)
 	{
 		prot_poll();
-		dial_poll();
+		yield();
 		if (tick)
 		{
 			tick=0;
@@ -138,9 +144,9 @@ int main(void)
 			for (i=0; i<N_LEDS; i++)
 			{
 				uint16_t v = gamma_translate(dial_get(led_map[i]));
-				dial_poll();
+				yield();
 				uart0_putchar(v&0xff);
-				dial_poll();
+				yield();
 				uart0_putchar(v>>8);
 			}
 		}

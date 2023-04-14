@@ -12,9 +12,11 @@
 #include "gamma.h"
 #include "io.h"
 #include "firmware.h"
+#include "ani.h"
 
 enum
 {
+	CMD_BLINK,
 	CMD_DEBUG,
 	CMD_FACTORY_RESET,
 	CMD_LOAD,
@@ -25,6 +27,8 @@ enum
 	CMD_SET_LED_1,
 	CMD_SET_LED_2,
 	CMD_SET_MAX_BRIGHTNESS,
+	CMD_OFF,
+	CMD_ON,
 	CMD_UNKNOWN_COMMAND,
 };
 
@@ -36,6 +40,7 @@ const struct
 
 } commands[] =
 {
+	{ .name = "BLINK",              .cmd = CMD_BLINK,                           },
 	{ .name = "DEBUG",              .cmd = CMD_DEBUG,                           },
 	{ .name = "FACTORY RESET",      .cmd = CMD_FACTORY_RESET,                   },
 	{ .name = "LOAD",               .cmd = CMD_LOAD,                            },
@@ -46,6 +51,8 @@ const struct
 	{ .name = "set led 1",          .cmd = CMD_SET_LED_1,          .cmp_off = 8 },
 	{ .name = "set led 2",          .cmd = CMD_SET_LED_2,          .cmp_off = 8 },
 	{ .name = "set MAX BRIGHTNESS", .cmd = CMD_SET_MAX_BRIGHTNESS, .cmp_off = 4 },
+	{ .name = "OFF",                .cmd = CMD_OFF,                             },
+	{ .name = "oN",                 .cmd = CMD_ON,                 .cmp_off = 1 },
 	{ .name = NULL,                 .cmd = CMD_UNKNOWN_COMMAND,                 },
 };
 
@@ -83,6 +90,9 @@ static void process_cmd(uint8_t *cmd_line)
 
 	switch (cmd)
 	{
+		case CMD_BLINK:
+			ani_blink();
+			break;
 		case CMD_DEBUG:
 			debug_print();
 			break;
@@ -154,6 +164,12 @@ static void process_cmd(uint8_t *cmd_line)
 
 			break;
 		}
+		case CMD_OFF:
+			ani_add(&preset_off, 120);
+			break;
+		case CMD_ON:
+			ani_add(&preset_default, 120);
+			break;
 		case CMD_UNKNOWN_COMMAND:
 			println ("unknown command");
 			break;

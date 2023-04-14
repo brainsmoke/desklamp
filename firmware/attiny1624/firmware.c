@@ -11,6 +11,7 @@
 #include "gamma.h"
 #include "io.h"
 #include "prot.h"
+#include "ani.h"
 #include "system.h"
 #include "settings.h"
 
@@ -99,6 +100,15 @@ void debug_print(void)
 		println("");
 	}
 
+	for (i=0; i<N_LEDS; i++)
+	{
+		print ("led ");
+		print_u16(i);
+		print (": ");
+		print_u16(ani_get_led(i));
+		println("");
+	}
+
 	settings_t s;
 	debug_read_settings(&s);
 	print_hexbytes((uint8_t *)&s, sizeof(s));
@@ -109,8 +119,6 @@ void rtc_tick(void)
 {
 	tick = 1;
 }
-
-const uint8_t led_map[N_LEDS] = { LED_MAP };
 
 void yield(void)
 {
@@ -129,27 +137,32 @@ int main(void)
 
 	load();
 
+	ani_init();
 	prot_init();
 
 	sei();
 	rtc_init();
 	for (;;)
 	{
-		prot_poll();
-		yield();
-		if (tick)
+		ani_next();
+
+		while (!tick)
 		{
-			tick=0;
-			uint8_t i;
-			for (i=0; i<N_LEDS; i++)
-			{
-				uint16_t v = gamma_translate(dial_get(led_map[i]));
-				yield();
-				uart0_putchar(v&0xff);
-				yield();
-				uart0_putchar(v>>8);
-			}
+			prot_poll();
+			yield();
 		}
+
+		uint8_t i;
+		for (i=0; i<N_LEDS; i++)
+		{
+			uint16_t v = gamma_translate(ani_get_led(i));
+			yield();
+			uart0_putchar(v&0xff);
+			yield();
+			uart0_putchar(v>>8);
+		}
+
+		tick=0;
 	}
 }
 

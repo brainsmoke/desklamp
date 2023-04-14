@@ -10,15 +10,22 @@
 #define DIAL_WHITE             0
 #define DIAL_WARM_WHITE        1
 #define DIAL_EXTRA_WARM_WHITE  2
+#define NO_DIAL                3
 
 
 #define N_LEDS        9
 
+#define LED_ALL_OFF 0,0,0, 0,0,0, 0,0,0
+#define LED_ALL_MAX 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff
+
+#define LED_BLINK 0xffff, 0, 0, 0xffff, 0, 0, 0xffff, 0, 0
+
 #define LED_ORDER DIAL_WHITE, DIAL_EXTRA_WARM_WHITE, DIAL_WARM_WHITE
 
-#define LED_MAP       LED_ORDER, LED_ORDER, LED_ORDER
+#define LED_DIAL_MAP       LED_ORDER, LED_ORDER, LED_ORDER
+#define LED_NO_DIAL_MAP NO_DIAL,NO_DIAL,NO_DIAL, NO_DIAL,NO_DIAL,NO_DIAL, NO_DIAL,NO_DIAL,NO_DIAL
 
-
+#define ANIMATION_QUEUE_SIZE 20
 
 #define DIAL_MIN_DEFAULT 600
 #define DIAL_MAX_DEFAULT 60000
@@ -46,7 +53,7 @@
 #define USART1_BAUDRATE 115200
 
 #define USART0_RX_BUF_SZ (1)
-#define USART1_RX_BUF_SZ (32)
+#define USART1_RX_BUF_SZ (128)
 
 
 #define USART0_PORTMUX PORTMUX_USART0_DEFAULT_gc // RX = PB3, TX = PB2

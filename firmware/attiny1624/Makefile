@@ -8,7 +8,7 @@ PROG_DEVICE=-u /dev/ttyUSB0
 TARGET=firmware.hex
 OBJ=firmware.o
 ELFTARGET=firmware.elf
-COMMON=uart.o adc.o io.o gamma.o rtc.o dial.o system.o prot.o settings.o
+COMMON=uart.o adc.o io.o gamma.o rtc.o dial.o system.o prot.o settings.o preset.o ani.o
 HEADERS=$(wildcard *.h)
 LDFLAGS=-Wl,-T,ld/avrxmega3.xn -B lib
 CFLAGS=-std=gnu99 -Wall -Os -D__AVR_DEV_LIB_NAME__=tn1624 -B lib -g

@@ -2,9 +2,9 @@
 
 White LED lamp made with aluminium PCBs
 
-| <img src="img/lamp0.jpg" width="512">   | <img src="img/lamp1.jpg" width="512"> |
+| <img src="img/lamp0.jpg" width="512"> | <img src="img/lamp1.jpg" width="512"> |
 |-|-|
-| <img src="img/lamp2.jpg" width="512"> | |
+| <img src="img/lamp2.jpg" width="512"> | <img src="img/lamp3.jpg" width="512"> |
 
 # LED PCBs are leftovers from:
 

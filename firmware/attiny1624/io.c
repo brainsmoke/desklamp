@@ -185,8 +185,8 @@ uint8_t *parse_led_config(uint8_t *s, uint8_t *dial, uint16_t *value)
 	if ( strncmp((char *)s, "dial", 4) == 0 )
 	{
 		s += 4;
-		if (*s >= '1' && *s <= '3')
-			d = *s - '1';
+		if (*s >= '0' && *s <= '2')
+			d = *s - '0';
 		else
 			return NULL;
 

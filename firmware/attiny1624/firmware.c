@@ -126,6 +126,8 @@ void yield(void)
 	uart_rx_poll();
 }
 
+static const uint8_t led_uart_reshuffle[N_LEDS] = { LED_UART_RESHUFFLE };
+
 int main(void)
 {
 	set_clock();
@@ -155,7 +157,7 @@ int main(void)
 		uint8_t i;
 		for (i=0; i<N_LEDS; i++)
 		{
-			uint16_t v = gamma_translate(ani_get_led(i));
+			uint16_t v = gamma_translate(ani_get_led(led_uart_reshuffle[i]));
 			yield();
 			uart0_putchar(v&0xff);
 			yield();

@@ -23,9 +23,8 @@ enum
 	CMD_RESET,
 	CMD_SAVE,
 	CMD_SET_GAMMA,
-	CMD_SET_LED_0,
-	CMD_SET_LED_1,
-	CMD_SET_LED_2,
+	CMD_SET_LED,
+	CMD_SET_LEDS,
 	CMD_SET_MAX_BRIGHTNESS,
 	CMD_OFF,
 	CMD_ON,
@@ -47,9 +46,8 @@ const struct
 	{ .name = "RESET",              .cmd = CMD_RESET,                           },
 	{ .name = "SAVE",               .cmd = CMD_SAVE,                            },
 	{ .name = "sET GAMMA",          .cmd = CMD_SET_GAMMA,          .cmp_off = 1 },
-	{ .name = "set LED 0",          .cmd = CMD_SET_LED_0,          .cmp_off = 4 },
-	{ .name = "set led 1",          .cmd = CMD_SET_LED_1,          .cmp_off = 8 },
-	{ .name = "set led 2",          .cmd = CMD_SET_LED_2,          .cmp_off = 8 },
+	{ .name = "set LED",            .cmd = CMD_SET_LED,            .cmp_off = 4 },
+	{ .name = "set ledS",           .cmd = CMD_SET_LEDS,           .cmp_off = 7 },
 	{ .name = "set MAX BRIGHTNESS", .cmd = CMD_SET_MAX_BRIGHTNESS, .cmp_off = 4 },
 	{ .name = "OFF",                .cmd = CMD_OFF,                             },
 	{ .name = "oN",                 .cmd = CMD_ON,                 .cmp_off = 1 },
@@ -129,21 +127,49 @@ static void process_cmd(uint8_t *cmd_line)
 
 			break;
 		}
-		case CMD_SET_LED_0:
-		case CMD_SET_LED_1:
-		case CMD_SET_LED_2:
+		case CMD_SET_LED:
 		{
-			uint8_t led = cmd-CMD_SET_LED_0;
-			uint16_t n;
-			args = parse_u16(args, &n);
-			if (args && *args == '\0')
+			uint16_t led;
+			args = parse_u16(args, &led);
+			if ( args && led < N_LEDS )
 			{
-				print ("set led ");
-				print_u16 (led);
-				print (" ");
-				print_u16 (n);
-				println ("");
+				while ( *args == ' ' )
+					args++;
+
+				preset_t p;
+				ani_get_preset_top(&p);
+				args = parse_led_config(args, &p.config[led], &p.brightness[led]);
+				if (args && *args == '\0')
+				{
+					ani_add(&p, 60);
+					break;
+				}
 			}
+			println ("syntax error");
+			break;
+		}
+		case CMD_SET_LEDS:
+		{
+			uint8_t i;
+			preset_t p;
+			for (i=0; i<N_LEDS; i++)
+			{
+				args = parse_led_config(args, &p.config[i], &p.brightness[i]);
+				if ( !args )
+					break;
+
+				if ( (i < N_LEDS-1) && (*args != ' ') )
+				{
+					args = NULL;
+					break;
+				}
+
+				while ( *args == ' ' )
+					args++;
+			}
+
+			if (args && *args == '\0')
+				ani_add(&p, 60);
 			else
 				println ("syntax error");
 			break;

@@ -6,11 +6,6 @@
 #include "dial.h"
 #include "firmware.h"
 
-static uint16_t ani_leds[N_LEDS];
-
-static uint16_t ani_offset, ani_size;
-static uint16_t ani_time;
-
 static const uint16_t sigmoid_table[33] = {
 /*
 from math import cos, pi
@@ -19,7 +14,6 @@ print (', '.join( '{:d}'.format(int( (1-cos(i*pi/32)) * (0x8000+.5) )&0xffff) fo
 0, 157, 629, 1411, 2494, 3869, 5522, 7438, 9597, 11980, 14563, 17321, 20228, 23256, 26375, 29556, 32768, 35980, 39161, 42280, 45308, 48215, 50973, 53556, 55939, 58098, 60014, 61667, 63042, 64125, 64907, 65379, 1
 };
 
-#include "io.h"
 uint32_t sigmoid(uint16_t v)
 {
 	uint8_t ix = v>>11;
@@ -33,11 +27,18 @@ uint32_t sigmoid(uint16_t v)
 	return res;
 }
 
-static const preset_t *ani_last = &preset_off;
+static uint16_t ani_leds[N_LEDS];
+
+#if ANIMATION_QUEUE_SIZE > 255
+#error "ANIMATION_QUEUE_SIZE too big"
+#endif
+
+static uint8_t ani_last, ani_cur, ani_size;
+static uint16_t ani_time;
 
 typedef struct
 {
-	const preset_t *p;
+	preset_t p;
 	uint16_t t;
 	uint32_t inv;
 
@@ -71,33 +72,34 @@ static uint16_t ani_preset_get_led(const preset_t *p, uint8_t i)
 
 void ani_next(void)
 {
-	if ( (ani_time >= ani_queue[ani_offset].t) && (ani_size > 1) )
+	if ( (ani_time >= ani_queue[ani_cur].t) && (ani_size > 2) )
 	{
-		ani_last = ani_queue[ani_offset].p;
+		ani_last = ani_cur;
+		if (ani_cur < ANIMATION_QUEUE_SIZE-1)
+			ani_cur += 1;
+		else
+			ani_cur = 0;
 
 		ani_time = 0;
-		ani_offset ++;
 		ani_size --;
-		if (ani_offset >= ANIMATION_QUEUE_SIZE)
-			ani_offset = 0;
 	}
 
-	uint32_t interp = sigmoid( ( ani_time * ani_queue[ani_offset].inv ) >> 16 );
+	uint32_t interp = sigmoid( ( ani_time * ani_queue[ani_cur].inv ) >> 16 );
 
 	yield();
 
 	uint8_t i;
 	for (i=0; i<N_LEDS; i++)
 	{
-		uint16_t a = ani_preset_get_led(ani_last, i);
-		uint32_t diff = ani_preset_get_led(ani_queue[ani_offset].p, i);
+		uint16_t a = ani_preset_get_led(&ani_queue[ani_last].p, i);
+		uint32_t diff = ani_preset_get_led(&ani_queue[ani_cur].p, i);
 		diff -= a;
 		diff *= interp;
 		ani_leds[i] = a + (diff>>16);
 		yield();
 	}
 
-	if (ani_time < ani_queue[ani_offset].t)
+	if (ani_time < ani_queue[ani_cur].t)
 		ani_time++;
 }
 
@@ -107,7 +109,7 @@ void ani_add(const preset_t *p, uint16_t frames)
 	if (ani_size >= ANIMATION_QUEUE_SIZE)
 		ani_size = ANIMATION_QUEUE_SIZE - 1;
 
-	int i = ani_offset + ani_size;
+	int i = ani_last + ani_size;
 	if (i >= ANIMATION_QUEUE_SIZE)
 		i -= ANIMATION_QUEUE_SIZE;
 
@@ -116,7 +118,7 @@ void ani_add(const preset_t *p, uint16_t frames)
 
 	ani_queue[i] = (ani_queue_t)
 	{
-		.p = p,
+		.p = *p,
 		.t = frames,
 		.inv = 0xffffffffUL/frames,
 	};
@@ -124,18 +126,19 @@ void ani_add(const preset_t *p, uint16_t frames)
 	ani_size++;
 }
 
-const preset_t *ani_preset_top(void) /* last preset on the queue, to restor after a notification */
+void ani_get_preset_top(preset_t *p) /* last preset on the queue, to restor after a notification */
 {
-	int i = ani_offset + ani_size - 1;
+	int i = ani_last + ani_size - 1;
 	if (i >= ANIMATION_QUEUE_SIZE)
 		i -= ANIMATION_QUEUE_SIZE;
 
-	return ani_queue[i].p;
+	*p = ani_queue[i].p;
 }
 
 void ani_blink(void)
 {
-	const preset_t *p = ani_preset_top();
+	preset_t p;
+	ani_get_preset_top(&p);
 	ani_add(&preset_off, 30);
 	ani_add(&preset_blink_on, 30);
 	ani_add(&preset_off, 30);
@@ -143,13 +146,14 @@ void ani_blink(void)
 	ani_add(&preset_off, 30);
 	ani_add(&preset_blink_on, 30);
 	ani_add(&preset_off, 30);
-	ani_add(p, 120);
+	ani_add(&p, 120);
 }
 
 
 void ani_init(void)
 {
-	ani_offset = ani_size = 0, ani_time = 0;
+	ani_last = 0, ani_cur = 1, ani_size = 0, ani_time = 0;
+	ani_add(&preset_off, 1);
 	ani_add(&preset_default, 120);
 }
 

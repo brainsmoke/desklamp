@@ -16,6 +16,6 @@ void ani_init(void);
 
 void ani_blink(void);
 
-const preset_t *ani_preset_top(void); /* last preset on the queue, to restor after a notification */
+void ani_get_preset_top(preset_t *p); /* last preset on the queue, to restor after a notification */
 
 #endif //ANI_H

@@ -11,9 +11,12 @@
 #define DIAL_WARM_WHITE        1
 #define DIAL_EXTRA_WARM_WHITE  2
 #define NO_DIAL                3
+#define STR_DIAL_RANGE        "dial{0,1,2}"
 
 
-#define N_LEDS        9
+#define N_LEDS         9
+#define STR_N_LEDS    "9"
+#define STR_LED_RANGE "{0..8}"
 
 #define LED_ALL_OFF 0,0,0, 0,0,0, 0,0,0
 #define LED_ALL_MAX 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff

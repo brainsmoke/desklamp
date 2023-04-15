@@ -99,13 +99,13 @@ void print_hexbytes(uint8_t *bytes, int len)
 	uart_putchar(']');
 }
 
-void print(char *s)
+void print(const char *s)
 {
 	for ( ; *s ; s++ )
 		uart_putchar(*s);
 }
 
-void println(char *s)
+void println(const char *s)
 {
 	print(s);
 	print("\r\n");

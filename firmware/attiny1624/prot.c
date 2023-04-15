@@ -230,7 +230,8 @@ void prot_poll(void)
 		}
 		uart_putchar(c);
 
-		line[ix++] = c;
+		if (ix < CMD_MAX)
+			line[ix++] = c;
 	}
 }
 

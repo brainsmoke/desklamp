@@ -1,5 +1,8 @@
 
 #include <stdlib.h>
+#include <string.h>
+
+#include "config.h"
 
 #include "io.h"
 #include "uart.h"
@@ -172,6 +175,37 @@ uint8_t *parse_u8_one_decimal(uint8_t *s, uint8_t *n)
 		return NULL;
 
 	*n = x;
+	return s;
+}
+
+uint8_t *parse_led_config(uint8_t *s, uint8_t *dial, uint16_t *value)
+{
+	uint8_t d = NO_DIAL;
+	uint16_t n = 65535;
+	if ( strncmp((char *)s, "dial", 4) == 0 )
+	{
+		s += 4;
+		if (*s >= '1' && *s <= '3')
+			d = *s - '1';
+		else
+			return NULL;
+
+		s++;
+
+		if (*s == ':' || *s == '*')
+		{
+			s++;
+			s = parse_u16(s, &n);
+		}
+	}
+	else
+		s = parse_u16(s, &n);
+
+	if (s)
+	{
+		*dial = d;
+		*value = n;
+	}
 	return s;
 }
 

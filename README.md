@@ -46,6 +46,17 @@ lampsh> set leds dial0 0 0 0 dial1 0 0 0 dial2 # drive one led/dial, each a diff
 lampsh> set leds dial0 dial1 dial2 dial0 dial1 dial2 dial0 dial1 dial2 # default setting
 ```
 
+# Firmware
+
+```
+apt install avr-gcc gmake pip3
+pip3 install pymcuprog
+cd firmware/attiny1624
+make
+make flash
+
+```
+
 # LED PCBs are leftovers from:
 
 https://github.com/brainsmoke/aluball

@@ -285,6 +285,9 @@ void prot_poll(void)
 	int c;
 	while ( (c = uart_getchar()) != -1)
 	{
+		if (c == '\t')
+			c = ' ';
+
 		if ( (c == '\n') && ( last == '\r') )
 			continue;
 
@@ -296,13 +299,8 @@ void prot_poll(void)
 				process_cmd(line);
 			write_prompt();
 			ix = 0;
-			break;
 		}
-
-		if (c == '\t')
-			c = ' ';
-
-		if (isprint(c) && !(last == ' ' && c == ' '))
+		else if (isprint(c) && !(last == ' ' && c == ' '))
 		{
 			uart_putchar(c);
 

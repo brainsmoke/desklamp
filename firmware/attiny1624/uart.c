@@ -48,7 +48,7 @@ void uart_rx_poll(void)
 	{
 		uint16_t off = usart0_rx_off + usart0_rx_len;
 
-		if (off > USART0_RX_BUF_SZ)
+		if (off >= USART0_RX_BUF_SZ)
 			off -= USART0_RX_BUF_SZ;
 
 		usart0_rx[off] = USART0.RXDATAL;
@@ -59,7 +59,7 @@ void uart_rx_poll(void)
 	{
 		uint16_t off = usart1_rx_off + usart1_rx_len;
 
-		if (off > USART1_RX_BUF_SZ)
+		if (off >= USART1_RX_BUF_SZ)
 			off -= USART1_RX_BUF_SZ;
 
 		usart1_rx[off] = USART1.RXDATAL;
@@ -101,7 +101,7 @@ int uart0_getchar(void)
 	if ( usart0_rx_off == USART0_RX_BUF_SZ)
 		usart0_rx_off = 0;
 
-	usart1_rx_len--;
+	usart0_rx_len--;
 	return res;
 }
 
@@ -138,7 +138,7 @@ int uart1_getchar(void)
 	uint8_t res = usart1_rx[usart1_rx_off++];
 
 	if ( usart1_rx_off == USART1_RX_BUF_SZ)
-		usart1_rx_off = 1;
+		usart1_rx_off = 0;
 
 	usart1_rx_len--;
 	return res;

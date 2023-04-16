@@ -31,20 +31,21 @@ void print_u16(uint16_t value)
 }
 
 
+static const uint32_t pow10[10] = { 1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10, 1 };
+
 void print_u32(uint32_t value)
 {
-	const uint32_t a[10] = { 1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10, 1 };
 	uint32_t v;
 	uint8_t i;
 	char c;
 	for (i = 0; i < 9; i++)
-		if (value >= a[i])
+		if (value >= pow10[i])
 			break;
 
 	for (; i < 10; i++)
 	{
 		c = '0';
-		v = a[i];
+		v = pow10[i];
 		while (value >= v)
 		{
 			c++;
@@ -59,12 +60,11 @@ void print_u32_fixed_point(uint32_t value, uint8_t decimals)
 	if (decimals > 9)
 		println("error: print_u32_fixed_point, bad point");
 
-	const uint32_t a[10] = { 1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10, 1 };
 	uint32_t v;
 	uint8_t i;
 	char c;
 	for (i = 0; i < 9-decimals; i++)
-		if (value >= a[i])
+		if (value >= pow10[i])
 			break;
 
 	for (; i < 10; i++)
@@ -73,7 +73,7 @@ void print_u32_fixed_point(uint32_t value, uint8_t decimals)
 			uart_putchar('.');
 
 		c = '0';
-		v = a[i];
+		v = pow10[i];
 		while (value >= v)
 		{
 			c++;
@@ -159,23 +159,114 @@ uint8_t *parse_u8_one_decimal(uint8_t *s, uint8_t *n)
 		s++;
 	}
 	if ( *s == '.' )
-		s++;
-	if ( *s >= '0' && *s <= '9' )
 	{
-		x = x + *s - '0';
 		s++;
-	}
-	if ( *s >= '5' && *s <= '9' )
-		x++;
+		if ( *s >= '0' && *s <= '9' )
+		{
+			x = x + *s - '0';
+			s++;
+		}
+		if ( *s >= '5' && *s <= '9' )
+			x++;
 
-	while ( *s >= '0' && *s <= '9' )
-		s++;
+		while ( *s >= '0' && *s <= '9' )
+			s++;
+	}
 
 	if (x > 255)
 		return NULL;
 
 	*n = x;
 	return s;
+}
+
+uint8_t *parse_u16_as_percentage(uint8_t *s, uint16_t *n)
+{
+	uint32_t x;
+	uint8_t d;
+
+	if ( (d = *s-'0') > 9 )
+		return NULL;
+
+	x = d;
+	s++;
+
+	if ( (d = *s-'0') <= 9 )
+	{
+		if (x == 0)
+			return NULL;
+
+		x = x*10 + d;
+		s++;
+
+		if ( (d = *s-'0') <= 9 )
+		{
+			x = x*10 + d;
+			s++;
+		}
+	}
+
+	x *= 100;
+
+	if ( *s == '.' )
+	{
+		s++;
+
+		if ( (d = *s-'0') <= 9 )
+		{
+			x = x + d * 10;
+			s++;
+
+			if ( (d = *s-'0') <= 9 )
+			{
+				x = x + d;
+				s++;
+
+				if ( (d = *s-'5') <= 9-5 )
+					x++;
+
+				while ( (d = *s-'0') <= 9 )
+				{
+					if (x == 10000 && d < 0)
+						return NULL;
+
+					s++;
+				}
+			}
+		}
+	}
+
+	if (x > 10000)
+		return NULL;
+
+	*n = x;
+
+	return s;
+}
+
+uint8_t *parse_brightness(uint8_t *s, uint16_t *n)
+{
+	s = parse_u16_as_percentage(s, n);
+/*
+
+inv = int(0xffffffff/10000)
+for i in range(10001):
+    i16 = (inv*i)>>16
+    irev = (((i16)*10000 + 0xffff )>>16) 
+    if i != irev:
+        print(i, irev, i16)
+
+*/
+
+	if (s)
+		*n = (((uint32_t)*n)*429496)>>16;
+	return s;
+}
+
+void print_brightness(uint16_t value)
+{
+	uint32_t percentage = ((uint32_t)value*10000+0xffff)>>16;
+	print_u32_fixed_point(percentage, 2);
 }
 
 uint8_t *parse_led_config(uint8_t *s, uint8_t *dial, uint16_t *value)
@@ -195,11 +286,11 @@ uint8_t *parse_led_config(uint8_t *s, uint8_t *dial, uint16_t *value)
 		if (*s == ':' || *s == '*')
 		{
 			s++;
-			s = parse_u16(s, &n);
+			s = parse_brightness(s, &n);
 		}
 	}
 	else
-		s = parse_u16(s, &n);
+		s = parse_brightness(s, &n);
 
 	if (s)
 	{

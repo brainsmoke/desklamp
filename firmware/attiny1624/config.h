@@ -18,6 +18,8 @@
 #define STR_N_LEDS    "9"
 #define STR_LED_RANGE "{0..8}"
 
+#define STR_BRIGHTNESS_RANGE "{0.00-100.00}"
+
 #define LED_ALL_OFF 0,0,0, 0,0,0, 0,0,0
 #define LED_ALL_MAX 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff
 

@@ -14,6 +14,11 @@ void flush(void);
 uint8_t *parse_u16(uint8_t *s, uint16_t *n);
 uint8_t *parse_u8_one_decimal(uint8_t *s, uint8_t *n);
 
+uint8_t *parse_u16_as_percentage(uint8_t *s, uint16_t *n); /* two decimals */
+
+uint8_t *parse_brightness(uint8_t *s, uint16_t *n);
+void print_brightness(uint16_t value);
+
 uint8_t *parse_led_config(uint8_t *s, uint8_t *dial, uint16_t *value);
 
 #endif //IO_H

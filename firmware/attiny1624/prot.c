@@ -72,11 +72,11 @@ static const struct
 	const char *desc;
 } args_help[] =
 {
-	{ 'n', " {0..65535}" },
+	{ 'n', " {" STR_BRIGHTNESS_RANGE "}" },
 	{ 'l', " " STR_LED_RANGE "" },
-	{ 'c', " [" STR_DIAL_RANGE "][:]{0..65535}" },
-	{ 'p', " [" STR_DIAL_RANGE "][:]{0..65535} ... x " STR_N_LEDS },
-	{ 'g', " {1.0..5.5}" },
+	{ 'c', " [" STR_DIAL_RANGE "][:][" STR_BRIGHTNESS_RANGE "]" },
+	{ 'p', " [" STR_DIAL_RANGE "][:][" STR_BRIGHTNESS_RANGE "] ... x " STR_N_LEDS },
+	{ 'g', " {1.0-5.5}" },
 	{ '\0', "" },
 };
 
@@ -132,10 +132,10 @@ uint8_t parse_args(uint8_t cmd, uint8_t *s)
 		switch (*a)
 		{
 			case 'n':
-				s = parse_u16(s, &args.n);
+				s = parse_brightness(s, &args.n);
 				break;
 			case 'l':
-				s = parse_u16(s, &args.led);
+				s = parse_brightness(s, &args.led);
 				if (args.led >= N_LEDS)
 					s=NULL;
 				break;
@@ -174,7 +174,7 @@ uint8_t parse_args(uint8_t cmd, uint8_t *s)
 	while (*s == ' ')
 		s++;
 
-	return *s == '\0';
+	return ( *s == '\0' || *s == '#' );
 }
 
 #define CMD_MAX (128)
@@ -252,7 +252,7 @@ static void process_cmd(uint8_t *cmd_line)
 		case CMD_SET_MAX_BRIGHTNESS:
 			gamma_set_max(args.n);
 			print ("max brightness: ");
-			print_u16 (gamma_get_max());
+			print_brightness(gamma_get_max());
 			println ("");
 			break;
 		case CMD_OFF:

@@ -39,7 +39,7 @@ lampsh> save                                   # make it permanent by saving it 
 ```
 
 ```
-lampsh> set led 2 dial2:50.00                  # use dial2 to scale up to 50%
+lampsh> set led 2 dial2:50.00                  # use dial2 to dim led 2 in the range 0%-50%
 
 lampsh> set leds dial0 0 0 0 dial1 0 0 0 dial2 # drive one led/dial, each a different temp & pcb
 

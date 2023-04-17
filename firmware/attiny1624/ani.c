@@ -57,17 +57,15 @@ uint16_t ani_get_led(uint8_t i)
 static uint16_t ani_preset_get_led(const preset_t *p, uint8_t i)
 {
 	// internal function, forgo bound check
-	uint32_t v =  p->brightness[i];
+	uint16_t b = p->brightness[i];
 
-	if ( p->config[i] != NO_DIAL )
-	{
-		v *= dial_get(p->config[i]);
-		v += 1;
-		v += (v>>16);
-		v >>= 16;
-	}
+	if ( p->config[i] == NO_DIAL )
+		return b;
 
-	return v;
+	uint32_t v = dial_get(p->config[i]);
+	v += 1;
+	v *= b;
+	return v>>16;
 }
 
 void ani_next(void)

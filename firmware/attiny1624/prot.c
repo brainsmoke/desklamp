@@ -150,7 +150,7 @@ uint8_t parse_args(uint8_t cmd, uint8_t *s)
 				uint8_t i;
 				for (i=0; i<N_LEDS; i++)
 				{
-					s = parse_led_config(s, &args.p.config[i], &args.p.brightness[i]);
+					s = parse_led_config(s, &args.p.dial[i], &args.p.brightness[i]);
 					if ( !s )
 						break;
 
@@ -242,7 +242,7 @@ static void process_cmd(uint8_t *cmd_line)
 			break;
 		case CMD_SET_LED:
 			ani_get_preset_top(&args.p);
-			args.p.config[args.led] = args.dial;
+			args.p.dial[args.led] = args.dial;
 			args.p.brightness[args.led] = args.n;
 			ani_add(&args.p, 60);
 			break;

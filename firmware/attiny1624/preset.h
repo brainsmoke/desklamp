@@ -8,7 +8,7 @@
 typedef struct
 {
 	uint16_t brightness[N_LEDS];
-	uint8_t config[N_LEDS];
+	uint8_t dial[N_LEDS];
 
 } preset_t;
 

@@ -288,7 +288,7 @@ void prot_poll(void)
 		if (c == '\t')
 			c = ' ';
 
-		if ( (c == '\n') && ( last == '\r') )
+		if ( (c == '\n') && (last == '\r') )
 			continue;
 
 		if ( (c == '\r') || (c == '\n') )

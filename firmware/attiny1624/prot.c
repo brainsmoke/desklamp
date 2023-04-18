@@ -94,7 +94,7 @@ static struct
 {
 	uint16_t led;
 	uint16_t n;
-	preset_t p;
+	ledconfig_t p;
 	uint8_t gamma;
 	uint8_t dial;
 
@@ -241,7 +241,7 @@ static void process_cmd(uint8_t *cmd_line)
 			println ("");
 			break;
 		case CMD_SET_LED:
-			ani_get_preset_top(&args.p);
+			ani_get_frame_top(&args.p);
 			args.p.dial[args.led] = args.dial;
 			args.p.brightness[args.led] = args.n;
 			ani_add(&args.p, 60);

@@ -6,6 +6,24 @@
 #include "dial.h"
 #include "firmware.h"
 
+const ledconfig_t preset_off =
+{
+	.brightness = { LED_ALL_OFF },
+	.dial = { LED_NO_DIAL_MAP },
+};
+
+const ledconfig_t preset_blink_on =
+{
+	.brightness = { LED_BLINK },
+	.dial = { LED_NO_DIAL_MAP },
+};
+
+const ledconfig_t preset_default =
+{
+	.brightness = { LED_ALL_MAX },
+	.dial = { LED_DIAL_MAP },
+};
+
 static const uint16_t sigmoid_table[33] = {
 /*
 from math import cos, pi
@@ -38,7 +56,7 @@ static uint16_t ani_time;
 
 typedef struct
 {
-	preset_t p;
+	ledconfig_t p;
 	uint16_t t;
 	uint32_t inv;
 
@@ -54,7 +72,7 @@ uint16_t ani_get_led(uint8_t i)
 	return ani_leds[i];
 }
 
-static uint16_t ani_preset_get_led(const preset_t *p, uint8_t i)
+static uint16_t ani_frame_get_led(const ledconfig_t *p, uint8_t i)
 {
 	// internal function, forgo bound check
 	uint16_t b = p->brightness[i];
@@ -89,8 +107,8 @@ void ani_next(void)
 	uint8_t i;
 	for (i=0; i<N_LEDS; i++)
 	{
-		uint16_t a = ani_preset_get_led(&ani_queue[ani_last].p, i);
-		uint32_t diff = ani_preset_get_led(&ani_queue[ani_cur].p, i);
+		uint16_t a = ani_frame_get_led(&ani_queue[ani_last].p, i);
+		uint32_t diff = ani_frame_get_led(&ani_queue[ani_cur].p, i);
 		diff -= a;
 		diff *= interp;
 		ani_leds[i] = a + (diff>>16);
@@ -101,7 +119,7 @@ void ani_next(void)
 		ani_time++;
 }
 
-void ani_add(const preset_t *p, uint16_t frames)
+void ani_add(const ledconfig_t *p, uint16_t frames)
 {
 	/* in case of an overflow, just overwrite the last */
 	if (ani_size >= ANIMATION_QUEUE_SIZE)
@@ -124,7 +142,7 @@ void ani_add(const preset_t *p, uint16_t frames)
 	ani_size++;
 }
 
-void ani_get_preset_top(preset_t *p) /* last preset on the queue, to restor after a notification */
+void ani_get_frame_top(ledconfig_t *p) /* last frame on the queue, to restore after a notification */
 {
 	int i = ani_last + ani_size - 1;
 	if (i >= ANIMATION_QUEUE_SIZE)
@@ -135,8 +153,8 @@ void ani_get_preset_top(preset_t *p) /* last preset on the queue, to restor afte
 
 void ani_blink(void)
 {
-	preset_t p;
-	ani_get_preset_top(&p);
+	ledconfig_t p;
+	ani_get_frame_top(&p);
 	ani_add(&preset_off, 30);
 	ani_add(&preset_blink_on, 30);
 	ani_add(&preset_off, 30);

@@ -71,7 +71,7 @@ U 1 1 6423DBEC
 P 8700 5650
 F 0 "RV1" H 8631 5696 50  0000 R CNN
 F 1 "R_POT" H 8631 5605 50  0000 R CNN
-F 2 "footprints:Potentiometer_Alps_RK09L_Single_Vertical_centered" H 8700 5650 50  0001 C CNN
+F 2 "footprints:Potentiometer_Alps_RK09L_Single_Vertical_radial" H 8700 5650 50  0001 C CNN
 F 3 "~" H 8700 5650 50  0001 C CNN
 	1    8700 5650
 	1    0    0    -1  
@@ -96,7 +96,7 @@ U 1 1 6424C543
 P 9700 5650
 F 0 "RV2" H 9631 5696 50  0000 R CNN
 F 1 "R_POT" H 9631 5605 50  0000 R CNN
-F 2 "footprints:Potentiometer_Alps_RK09L_Single_Vertical_centered" H 9700 5650 50  0001 C CNN
+F 2 "footprints:Potentiometer_Alps_RK09L_Single_Vertical_radial" H 9700 5650 50  0001 C CNN
 F 3 "~" H 9700 5650 50  0001 C CNN
 	1    9700 5650
 	1    0    0    -1  
@@ -107,7 +107,7 @@ U 1 1 6424C984
 P 10700 5650
 F 0 "RV3" H 10631 5696 50  0000 R CNN
 F 1 "R_POT" H 10631 5605 50  0000 R CNN
-F 2 "footprints:Potentiometer_Alps_RK09L_Single_Vertical_centered" H 10700 5650 50  0001 C CNN
+F 2 "footprints:Potentiometer_Alps_RK09L_Single_Vertical_radial" H 10700 5650 50  0001 C CNN
 F 3 "~" H 10700 5650 50  0001 C CNN
 	1    10700 5650
 	1    0    0    -1  
@@ -1170,4 +1170,38 @@ DRAIN
 Wire Wire Line
 	7450 5900 7500 5900
 Connection ~ 7450 5900
+Wire Wire Line
+	5150 5700 4900 5700
+Wire Wire Line
+	5150 5800 4900 5800
+Wire Wire Line
+	4900 5900 5150 5900
+$Comp
+L power:GND #PWR0117
+U 1 1 6443C384
+P 4900 6000
+F 0 "#PWR0117" H 4900 5750 50  0001 C CNN
+F 1 "GND" H 4905 5827 50  0000 C CNN
+F 2 "" H 4900 6000 50  0001 C CNN
+F 3 "" H 4900 6000 50  0001 C CNN
+	1    4900 6000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4900 5900 4900 6000
+Text GLabel 4900 5800 0    50   Input ~ 0
+UART1_RX
+Text GLabel 4900 5700 0    50   Input ~ 0
+UART1_TX
+$Comp
+L Connector:Conn_01x03_Male J6
+U 1 1 64455613
+P 5350 5800
+F 0 "J6" H 5322 5732 50  0000 R CNN
+F 1 "Conn_01x03_Male" H 5322 5823 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 5350 5800 50  0001 C CNN
+F 3 "~" H 5350 5800 50  0001 C CNN
+	1    5350 5800
+	-1   0    0    1   
+$EndComp
 $EndSCHEMATC

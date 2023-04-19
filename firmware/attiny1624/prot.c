@@ -21,20 +21,15 @@ enum
 	CMD_DEBUG,
 	CMD_FACTORY_RESET,
 	CMD_HELP,
-	CMD_LOAD,
-	CMD_LOAD_CUSTOM,
-	CMD_LOAD_DEFAULT,
+	CMD_LOAD_CALIB,
+	CMD_LOAD_PRESET,
 	CMD_OFF,
 	CMD_ON,
 	CMD_RESET,
-	CMD_RESTORE,
-	CMD_RESTORE_BLINK,
-	CMD_RESTORE_CUSTOM,
-	CMD_RESTORE_DEFAULT,
-	CMD_SAVE,
-	CMD_SAVE_BLINK,
-	CMD_SAVE_CUSTOM,
-	CMD_SAVE_DEFAULT,
+	CMD_RESTORE_CALIB,
+	CMD_RESTORE_PRESET,
+	CMD_SAVE_CALIB,
+	CMD_SAVE_PRESET,
 	CMD_SET_GAMMA,
 	CMD_SET_LED,
 	CMD_SET_LEDS,
@@ -63,20 +58,21 @@ static const cmd_t commands[] =
 	C( "debug",                 CMD_DEBUG,               ""    ),
 	C( "factory reset",         CMD_FACTORY_RESET,       ""    ),
 	C( "help",                  CMD_HELP,                ""    ),
-	C( "load calibrations",     CMD_LOAD,                ""    ),
-	C( "load custom",           CMD_LOAD_CUSTOM,         "c"   ),
-	C( "load default",          CMD_LOAD_DEFAULT,        "d"   ),
+	C( "load blink",            CMD_LOAD_PRESET,         "b"   ),
+	C( "load calibrations",     CMD_LOAD_CALIB,          ""    ),
+	C( "load custom",           CMD_LOAD_PRESET,         "c"   ),
+	C( "load default",          CMD_LOAD_PRESET,         "d"   ),
 	C( "off",                   CMD_OFF,                 ""    ),
 	C( "on",                    CMD_ON,                  ""    ),
 	C( "reset",                 CMD_RESET,               ""    ),
-	C( "restore calibrations",  CMD_RESTORE,             ""    ),
-	C( "restore blink",         CMD_RESTORE_BLINK,       "b"   ),
-	C( "restore custom",        CMD_RESTORE_CUSTOM,      "c"   ),
-	C( "restore default",       CMD_RESTORE_DEFAULT,     "d"   ),
-	C( "save calibrations",     CMD_SAVE,                ""    ),
-	C( "save blink",            CMD_SAVE_BLINK,          ""    ),
-	C( "save custom",           CMD_SAVE_CUSTOM,         "c"   ),
-	C( "save default",          CMD_SAVE_DEFAULT,        "d"   ),
+	C( "restore blink",         CMD_RESTORE_PRESET,      "b"   ),
+	C( "restore calibrations",  CMD_RESTORE_CALIB,       ""    ),
+	C( "restore custom",        CMD_RESTORE_PRESET,      "c"   ),
+	C( "restore default",       CMD_RESTORE_PRESET,      "d"   ),
+	C( "save blink",            CMD_SAVE_PRESET,         ""    ),
+	C( "save calibrations",     CMD_SAVE_CALIB,          ""    ),
+	C( "save custom",           CMD_SAVE_PRESET,         "c"   ),
+	C( "save default",          CMD_SAVE_PRESET,         "d"   ),
 	C( "set gamma",             CMD_SET_GAMMA,           "G"   ),
 	C( "set led",               CMD_SET_LED,             "lL"  ),
 	C( "set leds",              CMD_SET_LEDS,            "C"   ),
@@ -262,12 +258,11 @@ static void process_cmd(uint8_t *cmd_line)
 		case CMD_HELP:
 			help();
 			break;
-		case CMD_LOAD:
+		case CMD_LOAD_CALIB:
 			println ("loading eeprom");
 			load();
 			break;
-		case CMD_LOAD_CUSTOM:
-		case CMD_LOAD_DEFAULT:
+		case CMD_LOAD_PRESET:
 			read_preset(args.preset, &args.config);
 			ani_add(&args.config, 60);
 			break;
@@ -276,24 +271,20 @@ static void process_cmd(uint8_t *cmd_line)
 			flush();
 			reset();
 			break;
-		case CMD_RESTORE:
+		case CMD_RESTORE_CALIB:
 			restore();
 			load();
 			break;
-		case CMD_RESTORE_BLINK:
-		case CMD_RESTORE_CUSTOM:
-		case CMD_RESTORE_DEFAULT:
+		case CMD_RESTORE_PRESET:
 			write_preset(args.preset, &preset_restore[args.preset]);
-			if (cmd == CMD_RESTORE_DEFAULT)
+			if (args.preset == PRESET_DEFAULT)
 				ani_add(&preset_restore[args.preset], 60);
 			break;
-		case CMD_SAVE:
+		case CMD_SAVE_CALIB:
 			println ("saving eeprom");
 			save();
 			break;
-		case CMD_SAVE_BLINK:
-		case CMD_SAVE_CUSTOM:
-		case CMD_SAVE_DEFAULT:
+		case CMD_SAVE_PRESET:
 			ani_get_frame_top(&args.config);
 			write_preset(args.preset, &args.config);
 			break;

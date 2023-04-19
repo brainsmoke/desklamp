@@ -18,18 +18,19 @@ blink
 debug
 factory reset
 help
+load blink
 load calibrations
 load custom {0..3}
 load default
 off
 on
 reset
-restore calibrations
 restore blink
+restore calibrations
 restore custom {0..3}
 restore default
-save calibrations
 save blink
+save calibrations
 save custom {0..3}
 save default
 set gamma {1.0-5.5}

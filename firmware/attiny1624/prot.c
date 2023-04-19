@@ -27,6 +27,7 @@ enum
 	CMD_OFF,
 	CMD_ON,
 	CMD_RESET,
+	CMD_RESTORE,
 	CMD_RESTORE_BLINK,
 	CMD_RESTORE_CUSTOM,
 	CMD_RESTORE_DEFAULT,
@@ -58,27 +59,28 @@ static const cmd_t commands[] =
 {
 	#define C(str, command, alist) { .name = str, .cmd = command, .len = sizeof(str)-1, .arglist = alist }
 	/* commands are assumed to be in alphabetical order:    */
-	C( "blink",              CMD_BLINK,               ""    ),
-	C( "debug",              CMD_DEBUG,               ""    ),
-	C( "factory reset",      CMD_FACTORY_RESET,       ""    ),
-	C( "help",               CMD_HELP,                ""    ),
-	C( "load",               CMD_LOAD,                ""    ),
-	C( "load custom",        CMD_LOAD_CUSTOM,         "c"   ),
-	C( "load default",       CMD_LOAD_DEFAULT,        "d"   ),
-	C( "off",                CMD_OFF,                 ""    ),
-	C( "on",                 CMD_ON,                  ""    ),
-	C( "reset",              CMD_RESET,               ""    ),
-	C( "restore blink",      CMD_RESTORE_BLINK,       "b"   ),
-	C( "restore custom",     CMD_RESTORE_CUSTOM,      "c"   ),
-	C( "restore default",    CMD_RESTORE_DEFAULT,     "d"   ),
-	C( "save",               CMD_SAVE,                ""    ),
-	C( "save blink",         CMD_SAVE_BLINK,          "b"   ),
-	C( "save custom",        CMD_SAVE_CUSTOM,         "c"   ),
-	C( "save default",       CMD_SAVE_DEFAULT,        "d"   ),
-	C( "set gamma",          CMD_SET_GAMMA,           "G"   ),
-	C( "set led",            CMD_SET_LED,             "lL"  ),
-	C( "set leds",           CMD_SET_LEDS,            "C"   ),
-	C( "set max brightness", CMD_SET_MAX_BRIGHTNESS,  "B"   ),
+	C( "blink",                 CMD_BLINK,               ""    ),
+	C( "debug",                 CMD_DEBUG,               ""    ),
+	C( "factory reset",         CMD_FACTORY_RESET,       ""    ),
+	C( "help",                  CMD_HELP,                ""    ),
+	C( "load calibrations",     CMD_LOAD,                ""    ),
+	C( "load custom",           CMD_LOAD_CUSTOM,         "c"   ),
+	C( "load default",          CMD_LOAD_DEFAULT,        "d"   ),
+	C( "off",                   CMD_OFF,                 ""    ),
+	C( "on",                    CMD_ON,                  ""    ),
+	C( "reset",                 CMD_RESET,               ""    ),
+	C( "restore calibrations",  CMD_RESTORE,             ""    ),
+	C( "restore blink",         CMD_RESTORE_BLINK,       "b"   ),
+	C( "restore custom",        CMD_RESTORE_CUSTOM,      "c"   ),
+	C( "restore default",       CMD_RESTORE_DEFAULT,     "d"   ),
+	C( "save calibrations",     CMD_SAVE,                ""    ),
+	C( "save blink",            CMD_SAVE_BLINK,          ""    ),
+	C( "save custom",           CMD_SAVE_CUSTOM,         "c"   ),
+	C( "save default",          CMD_SAVE_DEFAULT,        "d"   ),
+	C( "set gamma",             CMD_SET_GAMMA,           "G"   ),
+	C( "set led",               CMD_SET_LED,             "lL"  ),
+	C( "set leds",              CMD_SET_LEDS,            "C"   ),
+	C( "set max brightness",    CMD_SET_MAX_BRIGHTNESS,  "B"   ),
 	#undef C
 };
 
@@ -273,6 +275,10 @@ static void process_cmd(uint8_t *cmd_line)
 			println ("resetting");
 			flush();
 			reset();
+			break;
+		case CMD_RESTORE:
+			restore();
+			load();
 			break;
 		case CMD_RESTORE_BLINK:
 		case CMD_RESTORE_CUSTOM:

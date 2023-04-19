@@ -3,6 +3,7 @@
 
 void load(void);
 void save(void);
+void restore(void);
 void factory_reset(void);
 
 void yield(void);

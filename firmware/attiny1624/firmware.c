@@ -46,12 +46,8 @@ void load(void)
 	}
 }
 
-
-void factory_reset(void)
+void restore(void)
 {
-	write_magic(EEPROM_MAGIC);
-	write_version(EEPROM_VERSION);
-
 	write_max_brightness(DEFAULT_MAX_BRIGHTNESS);
 	write_gamma_dec(DEFAULT_GAMMA_DEC);
 
@@ -62,7 +58,16 @@ void factory_reset(void)
 	uint8_t i;
 	for (i=0; i<N_DIALS; i++)
 		write_limits(i, &lim);
-	
+}
+
+
+void factory_reset(void)
+{
+	write_magic(EEPROM_MAGIC);
+	write_version(EEPROM_VERSION);
+	restore();
+
+	uint8_t i;
 	for (i=0; i<N_PRESETS; i++)
 		write_preset(i, &preset_restore[i]);
 

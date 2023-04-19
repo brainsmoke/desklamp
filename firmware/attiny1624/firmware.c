@@ -63,6 +63,8 @@ void factory_reset(void)
 	for (i=0; i<N_DIALS; i++)
 		write_limits(i, &lim);
 	
+	for (i=0; i<N_PRESETS; i++)
+		write_preset(i, &preset_restore[i]);
 
 	flush();
 	reset();

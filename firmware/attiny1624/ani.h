@@ -18,15 +18,16 @@ void ani_next(void);
 
 void ani_add(const ledconfig_t *p, uint16_t frames);
 
+void ani_on(uint16_t frames);
+void ani_off(uint16_t frames);
+
 void ani_init(void);
 
 void ani_blink(void);
 
 void ani_get_frame_top(ledconfig_t *p); /* last frame on the queue, to restor after a notification */
 
+extern const ledconfig_t preset_restore[N_PRESETS];
 extern const ledconfig_t preset_off;
-extern const ledconfig_t preset_blink_on;
-extern const ledconfig_t preset_default;
-
 
 #endif //ANI_H

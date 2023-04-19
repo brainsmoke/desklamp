@@ -19,10 +19,18 @@ debug
 factory reset
 help
 load
+load custom {0..3}
+load default
 off
 on
 reset
+restore blink
+restore custom {0..3}
+restore default
 save
+save blink
+save custom {0..3}
+save default
 set gamma {1.0-5.5}
 set led {0..8} [dial{0,1,2}][:][0.00-100.00]
 set leds [dial{0,1,2}][:][0.00-100.00] ... x 9

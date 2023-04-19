@@ -5,6 +5,9 @@
 #include "ani.h"
 #include "dial.h"
 #include "firmware.h"
+#include "settings.h"
+
+#include "io.h"
 
 const ledconfig_t preset_off =
 {
@@ -12,16 +15,44 @@ const ledconfig_t preset_off =
 	.dial = { LED_NO_DIAL_MAP },
 };
 
-const ledconfig_t preset_blink_on =
+const ledconfig_t preset_restore[N_PRESETS] =
 {
-	.brightness = { LED_BLINK },
-	.dial = { LED_NO_DIAL_MAP },
-};
+	[PRESET_CUSTOM_BASE+0] =
+	{
+		.brightness = { 0xffff, 0, 0,   0, 0xffff, 0,   0, 0, 0xffff },
+		.dial = { LED_DIAL_MAP },
+	},
 
-const ledconfig_t preset_default =
-{
-	.brightness = { LED_ALL_MAX },
-	.dial = { LED_DIAL_MAP },
+	[PRESET_CUSTOM_BASE+1] =
+	{
+		.brightness = { LED_ALL_MAX },
+		.dial = { 0, 0, 0, 1, 1, 1, 2, 2, 2 },
+	},
+
+	[PRESET_CUSTOM_BASE+2] =
+	{
+		.brightness = { LED_ALL_MAX },
+		.dial = { LED_DIAL_MAP },
+	},
+
+	[PRESET_CUSTOM_BASE+3] =
+	{
+		.brightness = { LED_ALL_MAX },
+		.dial = { LED_DIAL_MAP },
+	},
+
+	[PRESET_DEFAULT] =
+	{
+		.brightness = { LED_ALL_MAX },
+		.dial = { LED_DIAL_MAP },
+	},
+
+	[PRESET_BLINK] =
+	{
+		.brightness = { LED_BLINK },
+		.dial = { LED_NO_DIAL_MAP },
+	},
+
 };
 
 static const uint16_t sigmoid_table[33] = {
@@ -51,7 +82,7 @@ static uint16_t ani_leds[N_LEDS];
 #error "ANIMATION_QUEUE_SIZE too big"
 #endif
 
-static uint8_t ani_last, ani_cur, ani_size;
+static uint8_t ani_last, ani_cur, ani_size, ani_is_on;
 static uint16_t ani_time;
 
 typedef struct
@@ -63,6 +94,8 @@ typedef struct
 } ani_queue_t;
 
 static ani_queue_t ani_queue[ANIMATION_QUEUE_SIZE];
+
+static ledconfig_t last;
 
 uint16_t ani_get_led(uint8_t i)
 {
@@ -77,7 +110,7 @@ static uint16_t ani_frame_get_led(const ledconfig_t *p, uint8_t i)
 	// internal function, forgo bound check
 	uint16_t b = p->brightness[i];
 
-	if ( p->dial[i] == NO_DIAL )
+	if ( p->dial[i] >= NO_DIAL )
 		return b;
 
 	uint32_t v = dial_get(p->dial[i]);
@@ -140,6 +173,7 @@ void ani_add(const ledconfig_t *p, uint16_t frames)
 	};
 
 	ani_size++;
+	ani_is_on = 1;
 }
 
 void ani_get_frame_top(ledconfig_t *p) /* last frame on the queue, to restore after a notification */
@@ -153,23 +187,43 @@ void ani_get_frame_top(ledconfig_t *p) /* last frame on the queue, to restore af
 
 void ani_blink(void)
 {
-	ledconfig_t p;
+	ledconfig_t p, on;
+	uint8_t is_on = ani_is_on;
 	ani_get_frame_top(&p);
+	read_preset(PRESET_BLINK, &on);
 	ani_add(&preset_off, 30);
-	ani_add(&preset_blink_on, 30);
+	ani_add(&on, 30);
 	ani_add(&preset_off, 30);
-	ani_add(&preset_blink_on, 30);
+	ani_add(&on, 30);
 	ani_add(&preset_off, 30);
-	ani_add(&preset_blink_on, 30);
+	ani_add(&on, 30);
 	ani_add(&preset_off, 30);
 	ani_add(&p, 120);
+	ani_is_on = is_on;
 }
 
+void ani_on(uint16_t frames)
+{
+	if (!ani_is_on)
+		ani_add(&last, frames);
+}
+
+void ani_off(uint16_t frames)
+{
+	if (ani_is_on)
+	{
+		ani_get_frame_top(&last);
+		ani_add(&preset_off, frames);
+		ani_is_on = 0;
+	}
+}
 
 void ani_init(void)
 {
 	ani_last = 0, ani_cur = 1, ani_size = 0, ani_time = 0;
 	ani_add(&preset_off, 1);
-	ani_add(&preset_default, 120);
+	ledconfig_t p;
+	read_preset(PRESET_DEFAULT, &p);
+	ani_add(&p, 60);
 }
 

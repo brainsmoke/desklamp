@@ -58,7 +58,7 @@ void read_limits(uint8_t n, dial_limit_t* limit)
 	limit->max = eeprom_read_word(&settings.limits[n].max);
 }
 
-void write_limits(uint8_t n, dial_limit_t* limit)
+void write_limits(uint8_t n, const dial_limit_t* limit)
 {
 	if (n >= N_DIALS)
 		return;
@@ -75,6 +75,31 @@ void settings_init(void)
 	if ( read_magic() != EEPROM_MAGIC || read_version() < EEPROM_VERSION)
 		factory_reset();
 }
+
+void read_preset(uint8_t n, ledconfig_t *p)
+{
+	if (n >= N_PRESETS)
+		return;
+
+	eeprom_read_block(p, &settings.presets[n], sizeof(ledconfig_t));
+
+	uint8_t i;
+	for (i=0; i<N_LEDS;i++)
+		if (p->dial[i]>NO_DIAL)
+		{
+			*p = preset_restore[n];
+			break;
+		}
+}
+
+void write_preset(uint8_t n, const ledconfig_t *p)
+{
+	if (n >= N_PRESETS)
+		return;
+
+	eeprom_write_block(p, &settings.presets[n], sizeof(ledconfig_t));
+}
+
 
 void debug_read_settings(settings_t *s)
 {

@@ -16,7 +16,7 @@
 
 #define N_LEDS         9
 #define STR_N_LEDS    "9"
-#define STR_LED_RANGE "{0..8}"
+#define STR_LED_RANGE "0..8"
 
 #define STR_BRIGHTNESS_RANGE "0.00-100.00"
 
@@ -32,7 +32,14 @@
 
 #define LED_UART_RESHUFFLE 0,2,1,3,5,4,6,8,7
 
-#define ANIMATION_QUEUE_SIZE 20
+#define ANIMATION_QUEUE_SIZE 16
+
+#define N_CUSTOM            4
+#define N_PRESETS           6
+#define PRESET_CUSTOM_BASE  0
+#define PRESET_DEFAULT      4
+#define PRESET_BLINK        5
+#define STR_CUSTOM_RANGE "0..3"
 
 #define DIAL_MIN_DEFAULT 600
 #define DIAL_MAX_DEFAULT 60000

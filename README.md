@@ -18,16 +18,17 @@ blink
 debug
 factory reset
 help
-load
+load calibrations
 load custom {0..3}
 load default
 off
 on
 reset
+restore calibrations
 restore blink
 restore custom {0..3}
 restore default
-save
+save calibrations
 save blink
 save custom {0..3}
 save default

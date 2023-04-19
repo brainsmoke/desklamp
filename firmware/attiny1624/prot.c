@@ -138,10 +138,9 @@ void help(void)
 	println("");
 }
 
-uint8_t parse_args(uint8_t cmd, uint8_t *s)
+static uint8_t parse_args(uint8_t *s, const char *a)
 {
-	const char *a;
-	for (a=commands[cmd].arglist; *a; a++)
+	for (; *a; a++)
 	{
 		switch (*a)
 		{
@@ -237,7 +236,7 @@ static void process_cmd(uint8_t *cmd_line)
 
 		cmd = commands[i].cmd;
 
-		if (!parse_args(cmd, s))
+		if (!parse_args(s, commands[i].arglist))
 			cmd = CMD_SYNTAX_ERROR;
 
 		break;

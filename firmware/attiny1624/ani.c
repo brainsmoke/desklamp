@@ -7,8 +7,6 @@
 #include "firmware.h"
 #include "settings.h"
 
-#include "io.h"
-
 const ledconfig_t preset_off =
 {
 	.brightness = { LED_ALL_OFF },

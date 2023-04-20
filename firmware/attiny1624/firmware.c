@@ -75,6 +75,51 @@ void factory_reset(void)
 	reset();
 }
 
+static void print_config(const char *name, ledconfig_t *c)
+{
+	print(name);
+	println(": ");
+	print_led_config (c);
+	println ("");
+	println ("");
+}
+
+void print_state(void)
+{
+	print ("max brightness: ");
+	print_brightness(gamma_get_max());
+	println("");
+
+	print ("gamma: ");
+	print_u32_fixed_point(gamma_get(), 1);
+	println("");
+
+	println ("");
+	uint8_t i;
+	for (i=0; i<N_DIALS; i++)
+	{
+		print ("dial");
+		print_u32(i);
+		print (": ");
+		print_brightness(dial_get(i));
+		println("");
+	}
+	println ("");
+
+	ledconfig_t config;
+
+	ani_get_frame_top(&config);
+	print_config("current config", &config);
+
+	const char *names[] = { PRESET_NAMES };
+	for(i=0; i<N_PRESETS; i++)
+	{
+		read_preset(i, &config);
+		print_config(names[i], &config);
+	}
+}
+
+
 void debug_print(void)
 {
 	print ("max brightness: ");

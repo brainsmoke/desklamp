@@ -40,6 +40,7 @@
 #define PRESET_DEFAULT      4
 #define PRESET_BLINK        5
 #define STR_CUSTOM_RANGE "0..3"
+#define PRESET_NAMES "custom 0", "custom 1", "custom 2", "custom 3", "default", "blink"
 
 #define DIAL_MIN_DEFAULT 600
 #define DIAL_MAX_DEFAULT 60000

@@ -25,6 +25,7 @@ enum
 	CMD_LOAD_PRESET,
 	CMD_OFF,
 	CMD_ON,
+	CMD_PRINT,
 	CMD_RESET,
 	CMD_RESTORE_CALIB,
 	CMD_RESTORE_PRESET,
@@ -64,6 +65,7 @@ static const cmd_t commands[] =
 	C( "load default",          CMD_LOAD_PRESET,         "d"   ),
 	C( "off",                   CMD_OFF,                 ""    ),
 	C( "on",                    CMD_ON,                  ""    ),
+	C( "print",                 CMD_PRINT,               ""    ),
 	C( "reset",                 CMD_RESET,               ""    ),
 	C( "restore blink",         CMD_RESTORE_PRESET,      "b"   ),
 	C( "restore calibrations",  CMD_RESTORE_CALIB,       ""    ),
@@ -175,29 +177,14 @@ static uint8_t parse_args(uint8_t *s, const char *a)
 				args.preset += PRESET_CUSTOM_BASE;
 				break;
 			case 'L':
-				s = parse_led_config(s, &args.dial, &args.n);
+				s = parse_single_led_config(s, &args.dial, &args.n);
 				break;
 			case 'G':
 				s = parse_u8_one_decimal(s, &args.gamma);
 				break;
 			case 'C':
 			{
-				uint8_t i;
-				for (i=0; i<N_LEDS; i++)
-				{
-					s = parse_led_config(s, &args.config.dial[i], &args.config.brightness[i]);
-					if ( !s )
-						break;
-
-					if ( (i < N_LEDS-1) && (*s != ' ') )
-					{
-						s = NULL;
-						break;
-					}
-
-					while ( *s == ' ' )
-						s++;
-				}
+				s = parse_led_config(s, &args.config);
 				break;
 			}
 		}
@@ -224,11 +211,11 @@ static void process_cmd(uint8_t *cmd_line)
 	for (i=N_COMMANDS-1; i>=0; i--)
 	{
 		int res = strncasecmp((char *)cmd_line, commands[i].name, commands[i].len);
-//		if (res < 0)
-		if (res != 0)
+		if (res < 0)
+//		if (res != 0)
 			continue;
-//		else if (res > 0)
-//			break;
+		else if (res > 0)
+			break;
 
 		s = &cmd_line[commands[i].len];
 		if (*s != '\0' && *s != ' ')
@@ -307,6 +294,9 @@ static void process_cmd(uint8_t *cmd_line)
 			print ("max brightness: ");
 			print_brightness(gamma_get_max());
 			println ("");
+			break;
+		case CMD_PRINT:
+			print_state();
 			break;
 		case CMD_OFF:
 			ani_off(60);

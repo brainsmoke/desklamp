@@ -232,7 +232,7 @@ void print_brightness(uint16_t value)
 	print_u32_fixed_point(percentage, 2);
 }
 
-uint8_t *parse_led_config(uint8_t *s, uint8_t *dial, uint16_t *value)
+uint8_t *parse_single_led_config(uint8_t *s, uint8_t *dial, uint16_t *value)
 {
 	uint8_t d = NO_DIAL;
 	uint16_t n = 65535;
@@ -263,3 +263,46 @@ uint8_t *parse_led_config(uint8_t *s, uint8_t *dial, uint16_t *value)
 	return s;
 }
 
+void print_single_led_config(uint8_t dial, uint16_t value)
+{
+	if ( (dial < NO_DIAL) && (value != 0) )
+	{
+		print("dial");
+		print_u32(dial);
+		if (value == 65535)
+			return;
+		print(":");
+	}
+	print_brightness(value);
+}
+
+
+uint8_t *parse_led_config(uint8_t *s, ledconfig_t *config)
+{
+	uint8_t i;
+	for (i=0; i<N_LEDS; i++)
+	{
+		s = parse_single_led_config(s, &config->dial[i], &config->brightness[i]);
+		if ( !s )
+			return NULL;
+
+		if ( (i < N_LEDS-1) && (*s != ' ') )
+			return NULL;
+
+		while ( *s == ' ' )
+			s++;
+	}
+
+	return s;
+}
+
+void print_led_config(ledconfig_t *config)
+{
+	uint8_t i;
+	for (i=0; i<N_LEDS; i++)
+	{
+		print_single_led_config(config->dial[i], config->brightness[i]);
+		if (i < N_LEDS-1)
+			print(" ");
+	}
+}

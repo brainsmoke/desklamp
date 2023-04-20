@@ -24,6 +24,7 @@ load custom {0..3}
 load default
 off
 on
+print
 reset
 restore blink
 restore calibrations

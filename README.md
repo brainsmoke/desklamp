@@ -68,6 +68,41 @@ make flash
 
 ```
 
+# LED brightness calculation
+
+```
+
+   LED Config                                    interpolate       apply      max
+                                                 transition        gamma   brightness
+ --------------                                 -------------     -------  ----------
+
+ previous config                               t_cur / interval    gamma   brightness
+                                                     |               |         |
+ .-------------.                                     V               V         |
+ | per LED     |               .---.         .---------------.  .--------.     |
+ | brightness  |---------------- * --------->|          .__  |  |        |     V
+ |_____________|               '-^-'         |        ."     |  |       '|   .---.
+                                 |           |       /       |->|      / |-->| * |
+ .-------------.           .------------. .->|      /        |  |     /  |   '---'
+ | per LED     |-dial 0-2->| dial value | |  |  __-'         |  | __-'   |     |
+ | dial select |           |------------| |  '_______________'  '________'     |
+ |_____________|-no dial-->| max        | |  |               |                 V
+                           |____________| |  | sigmoid       |          .------------.
+ current config                           |  | interpolation |          |    LED     |
+                                          |  |_______________|          | brightness |
+ .-------------.                          |                             '------------'
+ | per LED     |               .---.      |
+ | brightness  |---------------- * -------'
+ |_____________|               '-^-'
+                                 |
+ .-------------.           .------------.
+ | per LED     |-dial 0-2->| dial value |
+ | dial select |           |------------|
+ |_____________|-no dial-->| max        |
+                           |____________|
+                           
+```
+
 # LED PCBs are leftovers from:
 
 https://github.com/brainsmoke/aluball

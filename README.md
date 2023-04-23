@@ -72,10 +72,10 @@ make flash
 
 ```
 
-   LED Config                                    interpolate       apply      max
-                                                 transition        gamma   brightness
+    per LED                                      interpolate       apply     scale
+     config                                      transition        gamma   brightness
  --------------                                 -------------     -------  ----------
-
+                                                                             scale
  previous config                               t_cur / interval    gamma   brightness
                                                      |               |         |
  .-------------.                                     V               V         |

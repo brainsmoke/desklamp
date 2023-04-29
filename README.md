@@ -109,7 +109,7 @@ https://github.com/brainsmoke/aluball
 
 ## PADAUK software:
 
-https://github.com/brainsmoke/esp32leddriver/tree/master/firmware/pdk/softpwm
+https://github.com/brainsmoke/softpwmpdk
 
-`make ADDRESS=...` each in 0..2
+`./write.sh <address>` 3x for each in 0..7
 

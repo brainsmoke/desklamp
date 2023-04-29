@@ -75,8 +75,8 @@ make flash
     per LED                                      interpolate       apply     scale
      config                                      transition        gamma   brightness
  --------------                                 -------------     -------  ----------
-                                                                             scale
- previous config                               t_cur / interval    gamma   brightness
+                                                                              max 
+ current config                                t_cur / interval    gamma   brightness
                                                      |               |         |
  .-------------.                                     V               V         |
  | per LED     |               .---.         .---------------.  .--------.     |
@@ -88,7 +88,7 @@ make flash
  | dial select |           |------------| |  '_______________'  '________'     |
  |_____________|-no dial-->| max        | |  |               |                 V
                            |____________| |  | sigmoid       |          .------------.
- current config                           |  | interpolation |          |    LED     |
+ previous config                          |  | interpolation |          |    LED     |
                                           |  |_______________|          | brightness |
  .-------------.                          |                             '------------'
  | per LED     |               .---.      |
@@ -111,5 +111,5 @@ https://github.com/brainsmoke/aluball
 
 https://github.com/brainsmoke/softpwmpdk
 
-`./write.sh <address>` 3x for each in 0..7
+`./write.sh <address>` for each in 0..2
 

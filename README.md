@@ -1,5 +1,7 @@
 # desk lamp
 
+An attempt of trying to build something, mostly from materials I already had on hand.
+
 White LED lamp made with aluminium PCBs
 
 | <img src="img/lamp0.jpg" width="512"> | <img src="img/lamp1.jpg" width="512"> |

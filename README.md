@@ -1,6 +1,6 @@
 # desk lamp
 
-An attempt of trying to build something, mostly from materials I already had on hand.
+An attempt to try to build something, mostly from materials I already had on hand.
 
 White LED lamp made with aluminium PCBs
 

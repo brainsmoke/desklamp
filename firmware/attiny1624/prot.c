@@ -58,6 +58,12 @@ static const cmd_t commands[] =
 	C( "blink",                 CMD_BLINK,               ""    ),
 	C( "debug",                 CMD_DEBUG,               ""    ),
 	C( "factory reset",         CMD_FACTORY_RESET,       ""    ),
+	C( "fade custom",           CMD_LOAD_PRESET,         "tc"  ),
+	C( "fade default",          CMD_LOAD_PRESET,         "td"  ),
+	C( "fade led",              CMD_SET_LED,             "tlL" ),
+	C( "fade leds",             CMD_SET_LEDS,            "tC"  ),
+	C( "fade off",              CMD_OFF,                 "t"   ),
+	C( "fade on",               CMD_ON,                  "t"   ),
 	C( "help",                  CMD_HELP,                ""    ),
 	C( "load blink",            CMD_LOAD_PRESET,         "b"   ),
 	C( "load calibrations",     CMD_LOAD_CALIB,          ""    ),
@@ -94,6 +100,7 @@ static const struct
 	{ 'c', " {" STR_CUSTOM_RANGE "}" },
 	{ 'b', "" },
 	{ 'd', "" },
+	{ 't', " [" STR_FADE_RANGE"]" },
 	{ 'B', " {" STR_BRIGHTNESS_RANGE "}" },
 	{ 'L', " [" STR_DIAL_RANGE "][:][" STR_BRIGHTNESS_RANGE "]" },
 	{ 'C', " [" STR_DIAL_RANGE "][:][" STR_BRIGHTNESS_RANGE "] ... x " STR_N_LEDS },
@@ -115,6 +122,7 @@ static struct
 {
 	uint16_t led;
 	uint16_t preset;
+	uint16_t timeout;
 	uint16_t n;
 	ledconfig_t config;
 	uint8_t gamma;
@@ -142,6 +150,8 @@ void help(void)
 
 static uint8_t parse_args(uint8_t *s, const char *a)
 {
+	args.timeout = DEFAULT_FADE;
+
 	for (; *a; a++)
 	{
 		switch (*a)
@@ -182,11 +192,12 @@ static uint8_t parse_args(uint8_t *s, const char *a)
 			case 'G':
 				s = parse_u8_one_decimal(s, &args.gamma);
 				break;
+			case 't':
+				s = parse_timeout(s, &args.timeout);
+				break;
 			case 'C':
-			{
 				s = parse_led_config(s, &args.config);
 				break;
-			}
 		}
 
 		if (!s)
@@ -250,7 +261,7 @@ static void process_cmd(uint8_t *cmd_line)
 			break;
 		case CMD_LOAD_PRESET:
 			read_preset(args.preset, &args.config);
-			ani_add(&args.config, 60);
+			ani_add(&args.config, args.timeout);
 			break;
 		case CMD_RESET:
 			println ("resetting");
@@ -264,7 +275,7 @@ static void process_cmd(uint8_t *cmd_line)
 		case CMD_RESTORE_PRESET:
 			write_preset(args.preset, &preset_restore[args.preset]);
 			if (args.preset == PRESET_DEFAULT)
-				ani_add(&preset_restore[args.preset], 60);
+				ani_add(&preset_restore[args.preset], args.timeout);
 			break;
 		case CMD_SAVE_CALIB:
 			println ("saving eeprom");
@@ -284,10 +295,10 @@ static void process_cmd(uint8_t *cmd_line)
 			ani_get_frame_top(&args.config);
 			args.config.dial[args.led] = args.dial;
 			args.config.brightness[args.led] = args.n;
-			ani_add(&args.config, 60);
+			ani_add(&args.config, args.timeout);
 			break;
 		case CMD_SET_LEDS:
-			ani_add(&args.config, 60);
+			ani_add(&args.config, args.timeout);
 			break;
 		case CMD_SET_MAX_BRIGHTNESS:
 			gamma_set_max(args.n);
@@ -299,10 +310,10 @@ static void process_cmd(uint8_t *cmd_line)
 			print_state();
 			break;
 		case CMD_OFF:
-			ani_off(60);
+			ani_off(args.timeout);
 			break;
 		case CMD_ON:
-			ani_on(60);
+			ani_on(args.timeout);
 			break;
 		case CMD_UNKNOWN_COMMAND:
 			println ("unknown command");

@@ -19,6 +19,12 @@ commands:
 blink
 debug
 factory reset
+fade custom [0.00-655.36] {0..3}
+fade default [0.00-655.36]
+fade led [0.00-655.36] {0..8} [dial{0,1,2}][:][0.00-100.00]
+fade leds [0.00-655.36] [dial{0,1,2}][:][0.00-100.00] ... x 9
+fade off [0.00-655.36]
+fade on [0.00-655.36]
 help
 load blink
 load calibrations

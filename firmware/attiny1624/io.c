@@ -8,6 +8,7 @@
 #include "uart.h"
 
 static const uint32_t pow10[10] = { 1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10, 1 };
+static const uint16_t fixed16_max[5] = { 65535, 6553, 655, 65, 6 };
 
 void print_u32_fixed_point(uint32_t value, uint8_t decimals)
 {
@@ -204,6 +205,62 @@ uint8_t *parse_u16_as_percentage(uint8_t *s, uint16_t *n)
 
 	*n = x;
 
+	return s;
+}
+
+uint8_t *parse_u16_fixed_point(uint8_t *s, uint8_t decimals, uint16_t *n)
+{
+	uint16_t x = 0;
+	if (decimals > 4)
+		return NULL;
+
+	if ( *s != '.' )
+		s = parse_u16(s, &x);
+
+	if (!s)
+		return NULL;
+
+	if (x > fixed16_max[decimals])
+		return NULL;
+
+	x *= pow10[9-decimals];
+	uint16_t fraction = 0;
+
+	if ( *s == '.' )
+	{
+		s++;
+		while (decimals--)
+		{
+			uint8_t digit = *s - '0';
+			if ( digit < 10 )
+			{
+				fraction += (uint16_t)pow10[9-decimals] * digit;
+				s++;
+			}
+			else
+				break;
+
+		}
+		if ( *s >= '5' && *s <= '9' )
+			fraction++;
+
+		while ( *s >= '0' && *s <= '9' )
+			s++;
+	}
+
+	if (x > 65535-fraction)
+		return NULL;
+
+	*n = x+fraction;
+
+	return s;
+}
+
+uint8_t *parse_timeout(uint8_t *s, uint16_t *n)
+{
+	s = parse_u16_fixed_point(s, 2, n);
+	if (s)
+		*n = (((uint32_t)*n)*39322)>>16;
 	return s;
 }
 

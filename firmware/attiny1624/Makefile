@@ -5,6 +5,9 @@ MCU=attiny1624 # as known by avr-gcc
 PROG_MCU=attiny1624 # as known by the programmer
 PROG_DEVICE=-u /dev/ttyUSB0
 
+BROWNOUT_FUSE=0x1
+BROWNOUT_FUSE_VALUE=0x7A # 2v95, sampled, 125Hz
+
 TARGET=firmware.hex
 OBJ=firmware.o
 ELFTARGET=firmware.elf
@@ -32,7 +35,9 @@ all: $(TARGET) $(ELFTARGET)
 
 flash: $(TARGET)
 	pymcuprog erase -m flash -t uart -d $(PROG_MCU) $(PROG_DEVICE)
+	pymcuprog write -m fuses -t uart -d $(PROG_MCU) $(PROG_DEVICE) -o $(BROWNOUT_FUSE) -l $(BROWNOUT_FUSE_VALUE)
 	pymcuprog write -t uart -d $(PROG_MCU) $(PROG_DEVICE) -f $(TARGET)
+
 
 #fuses:
 #	avrdude -v -c usbtiny -pt85 -U lfuse:w:0xe2:m -U hfuse:w:0xdf:m -U efuse:w:0xff:m

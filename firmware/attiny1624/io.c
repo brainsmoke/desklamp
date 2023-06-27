@@ -256,9 +256,13 @@ uint8_t *parse_u16_fixed_point(uint8_t *s, uint8_t decimals, uint16_t *n)
 	return s;
 }
 
-uint8_t *parse_timeout(uint8_t *s, uint16_t *n)
+uint8_t *parse_timeout(uint8_t *s, uint16_t *n, uint16_t max)
 {
 	s = parse_u16_fixed_point(s, 2, n);
+
+	if (s && *n > max)
+		s = NULL;
+
 	if (s)
 		*n = (((uint32_t)*n)*39322)>>16;
 	return s;

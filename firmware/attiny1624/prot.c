@@ -193,7 +193,7 @@ static uint8_t parse_args(uint8_t *s, const char *a)
 				s = parse_u8_one_decimal(s, &args.gamma);
 				break;
 			case 't':
-				s = parse_timeout(s, &args.timeout);
+				s = parse_timeout(s, &args.timeout, FADE_MAX);
 				break;
 			case 'C':
 				s = parse_led_config(s, &args.config);

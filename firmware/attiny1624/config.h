@@ -21,7 +21,8 @@
 #define STR_BRIGHTNESS_RANGE "0.00-100.00"
 
 #define DEFAULT_FADE (60)
-#define STR_FADE_RANGE "0.00-655.36"
+#define STR_FADE_RANGE "0.00-60.00"
+#define FADE_MAX (6000)
 
 #define LED_ALL_OFF 0,0,0, 0,0,0, 0,0,0
 #define LED_ALL_MAX 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff

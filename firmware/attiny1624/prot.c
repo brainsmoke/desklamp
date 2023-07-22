@@ -58,19 +58,13 @@ static const cmd_t commands[] =
 	C( "blink",                 CMD_BLINK,               ""    ),
 	C( "debug",                 CMD_DEBUG,               ""    ),
 	C( "factory reset",         CMD_FACTORY_RESET,       ""    ),
-	C( "fade custom",           CMD_LOAD_PRESET,         "tc"  ),
-	C( "fade default",          CMD_LOAD_PRESET,         "td"  ),
-	C( "fade led",              CMD_SET_LED,             "tlL" ),
-	C( "fade leds",             CMD_SET_LEDS,            "tC"  ),
-	C( "fade off",              CMD_OFF,                 "t"   ),
-	C( "fade on",               CMD_ON,                  "t"   ),
 	C( "help",                  CMD_HELP,                ""    ),
-	C( "load blink",            CMD_LOAD_PRESET,         "b"   ),
+	C( "load blink",            CMD_LOAD_PRESET,         "bF"  ),
 	C( "load calibrations",     CMD_LOAD_CALIB,          ""    ),
-	C( "load custom",           CMD_LOAD_PRESET,         "c"   ),
-	C( "load default",          CMD_LOAD_PRESET,         "d"   ),
-	C( "off",                   CMD_OFF,                 ""    ),
-	C( "on",                    CMD_ON,                  ""    ),
+	C( "load custom",           CMD_LOAD_PRESET,         "cF"  ),
+	C( "load default",          CMD_LOAD_PRESET,         "dF"  ),
+	C( "off",                   CMD_OFF,                 "F"   ),
+	C( "on",                    CMD_ON,                  "F"   ),
 	C( "print",                 CMD_PRINT,               ""    ),
 	C( "reset",                 CMD_RESET,               ""    ),
 	C( "restore blink",         CMD_RESTORE_PRESET,      "b"   ),
@@ -82,8 +76,8 @@ static const cmd_t commands[] =
 	C( "save custom",           CMD_SAVE_PRESET,         "c"   ),
 	C( "save default",          CMD_SAVE_PRESET,         "d"   ),
 	C( "set gamma",             CMD_SET_GAMMA,           "G"   ),
-	C( "set led",               CMD_SET_LED,             "lL"  ),
-	C( "set leds",              CMD_SET_LEDS,            "C"   ),
+	C( "set led",               CMD_SET_LED,             "lLF" ),
+	C( "set leds",              CMD_SET_LEDS,            "CF"  ),
 	C( "set max brightness",    CMD_SET_MAX_BRIGHTNESS,  "B"   ),
 	#undef C
 };
@@ -100,11 +94,11 @@ static const struct
 	{ 'c', " {" STR_CUSTOM_RANGE "}" },
 	{ 'b', "" },
 	{ 'd', "" },
-	{ 't', " [" STR_FADE_RANGE"]" },
 	{ 'B', " {" STR_BRIGHTNESS_RANGE "}" },
-	{ 'L', " [" STR_DIAL_RANGE "][:][" STR_BRIGHTNESS_RANGE "]" },
-	{ 'C', " [" STR_DIAL_RANGE "][:][" STR_BRIGHTNESS_RANGE "] ... x " STR_N_LEDS },
+	{ 'L', " <[" STR_DIAL_RANGE "][:][" STR_BRIGHTNESS_RANGE "]>" },
+	{ 'C', " <[" STR_DIAL_RANGE "][:][" STR_BRIGHTNESS_RANGE "]> ... x " STR_N_LEDS },
 	{ 'G', " {1.0-5.5}" },
+	{ 'F', " [fade {" STR_FADE_RANGE"}]" },
 	{ '\0', "" },
 };
 
@@ -192,8 +186,9 @@ static uint8_t parse_args(uint8_t *s, const char *a)
 			case 'G':
 				s = parse_u8_one_decimal(s, &args.gamma);
 				break;
-			case 't':
-				s = parse_timeout(s, &args.timeout, FADE_MAX);
+			case 'F':
+				if (*s)
+					s = parse_fade(s, &args.timeout, FADE_MAX);
 				break;
 			case 'C':
 				s = parse_led_config(s, &args.config);

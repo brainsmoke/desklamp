@@ -268,6 +268,19 @@ uint8_t *parse_timeout(uint8_t *s, uint16_t *n, uint16_t max)
 	return s;
 }
 
+
+uint8_t *parse_fade(uint8_t *s, uint16_t *n, uint16_t max)
+{
+	if ( strncmp((char *)s, "fade ", 5) != 0 )
+		return NULL;
+
+	s += 5;
+	while (*s == ' ')
+		s++;
+
+	return parse_timeout(s, n, max);
+}
+
 uint8_t *parse_brightness(uint8_t *s, uint16_t *n)
 {
 	s = parse_u16_as_percentage(s, n);

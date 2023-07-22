@@ -19,19 +19,13 @@ commands:
 blink
 debug
 factory reset
-fade custom [0.00-60.00] {0..3}
-fade default [0.00-60.00]
-fade led [0.00-60.00] {0..8} [dial{0,1,2}][:][0.00-100.00]
-fade leds [0.00-60.00] [dial{0,1,2}][:][0.00-100.00] ... x 9
-fade off [0.00-60.00]
-fade on [0.00-60.00]
 help
-load blink
+load blink [fade {0.00-60.00}]
 load calibrations
-load custom {0..3}
-load default
-off
-on
+load custom {0..3} [fade {0.00-60.00}]
+load default [fade {0.00-60.00}]
+off [fade {0.00-60.00}]
+on [fade {0.00-60.00}]
 print
 reset
 restore blink
@@ -43,8 +37,8 @@ save calibrations
 save custom {0..3}
 save default
 set gamma {1.0-5.5}
-set led {0..8} [dial{0,1,2}][:][0.00-100.00]
-set leds [dial{0,1,2}][:][0.00-100.00] ... x 9
+set led {0..8} <[dial{0,1,2}][:][0.00-100.00]> [fade {0.00-60.00}]
+set leds <[dial{0,1,2}][:][0.00-100.00]> ... x 9 [fade {0.00-60.00}]
 set max brightness {0.00-100.00}
 
 ```

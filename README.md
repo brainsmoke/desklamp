@@ -37,8 +37,8 @@ save calibrations
 save custom {0..3}
 save default
 set gamma {1.0-5.5}
-set led {0..8} <[dial{0,1,2}][:][0.00-100.00]> [fade {0.00-60.00}]
-set leds <[dial{0,1,2}][:][0.00-100.00]> ... x 9 [fade {0.00-60.00}]
+set led {0..8} ({0.00-100.00} | dial{0,1,2}[:{0.00-100.00}]) [fade {0.00-60.00}]
+set leds ({0.00-100.00} | dial{0,1,2}[:{0.00-100.00}]) x 9 [fade {0.00-60.00}]
 set max brightness {0.00-100.00}
 
 ```

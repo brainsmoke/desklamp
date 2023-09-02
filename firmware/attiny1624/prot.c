@@ -158,7 +158,7 @@ static uint8_t parse_args(uint8_t *s, const char *a)
 				continue;
 		}
 
-		if (*s != ' ')
+		if ( (*s != ' ') && (*s != '\0') )
 			return 0;
 
 		while (*s == ' ')

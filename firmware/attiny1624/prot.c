@@ -90,15 +90,15 @@ static const struct
 	const char *desc;
 } args_help[] =
 {
-	{ 'l', " {" STR_LED_RANGE "}" },
-	{ 'c', " {" STR_CUSTOM_RANGE "}" },
+	{ 'l', " " STR_LED_RANGE },
+	{ 'c', " " STR_CUSTOM_RANGE },
 	{ 'b', "" },
 	{ 'd', "" },
-	{ 'B', " {" STR_BRIGHTNESS_RANGE "}" },
-	{ 'L', " <[" STR_DIAL_RANGE "][:][" STR_BRIGHTNESS_RANGE "]>" },
-	{ 'C', " <[" STR_DIAL_RANGE "][:][" STR_BRIGHTNESS_RANGE "]> ... x " STR_N_LEDS },
-	{ 'G', " {1.0-5.5}" },
-	{ 'F', " [fade {" STR_FADE_RANGE"}]" },
+	{ 'B', " " STR_BRIGHTNESS_RANGE },
+	{ 'L', " (" STR_BRIGHTNESS_RANGE " | " STR_DIAL_RANGE "[:" STR_BRIGHTNESS_RANGE "])" },
+	{ 'C', " (" STR_BRIGHTNESS_RANGE " | " STR_DIAL_RANGE "[:" STR_BRIGHTNESS_RANGE "]) x " STR_N_LEDS },
+	{ 'G', " " STR_GAMMA_RANGE },
+	{ 'F', " [fade " STR_FADE_RANGE"]" },
 	{ '\0', "" },
 };
 

@@ -16,13 +16,15 @@
 
 #define N_LEDS         9
 #define STR_N_LEDS    "9"
-#define STR_LED_RANGE "0..8"
+#define STR_LED_RANGE "{0..8}"
 
-#define STR_BRIGHTNESS_RANGE "0.00-100.00"
+#define STR_BRIGHTNESS_RANGE "{0.00-100.00}"
 
 #define DEFAULT_FADE (60)
-#define STR_FADE_RANGE "0.00-60.00"
+#define STR_FADE_RANGE "{0.00-60.00}"
 #define FADE_MAX (6000)
+
+#define STR_GAMMA_RANGE "{1.0-5.5}"
 
 #define LED_ALL_OFF 0,0,0, 0,0,0, 0,0,0
 #define LED_ALL_MAX 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff
@@ -43,7 +45,7 @@
 #define PRESET_CUSTOM_BASE  0
 #define PRESET_DEFAULT      4
 #define PRESET_BLINK        5
-#define STR_CUSTOM_RANGE "0..3"
+#define STR_CUSTOM_RANGE "{0..3}"
 #define PRESET_NAMES "custom 0", "custom 1", "custom 2", "custom 3", "default", "blink"
 
 #define DIAL_MIN_DEFAULT 600

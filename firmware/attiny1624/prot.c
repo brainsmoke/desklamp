@@ -71,7 +71,7 @@ static const cmd_t commands[] =
 	C( "restore calibrations",  CMD_RESTORE_CALIB,       ""    ),
 	C( "restore custom",        CMD_RESTORE_PRESET,      "c"   ),
 	C( "restore default",       CMD_RESTORE_PRESET,      "d"   ),
-	C( "save blink",            CMD_SAVE_PRESET,         ""    ),
+	C( "save blink",            CMD_SAVE_PRESET,         "b"   ),
 	C( "save calibrations",     CMD_SAVE_CALIB,          ""    ),
 	C( "save custom",           CMD_SAVE_PRESET,         "c"   ),
 	C( "save default",          CMD_SAVE_PRESET,         "d"   ),
